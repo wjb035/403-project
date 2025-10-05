@@ -76,17 +76,21 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WhiteboardSimTheme {
+                    // Creates a navController for switching between views. You start
+                    // off in the home menu.
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
                         startDestination = "home",
                         modifier = Modifier.padding(4.dp)
                     ){
+                        // All the different routes. Each one is given a reference
+                        // to the nav controller so you can navigate between areas.
                         composable(route = "home"){
                             home(navCon=navController)
                         }
                         composable(route="whiteboard"){
-                            whiteboard()
+                            whiteboard(navCon=navController)
                         }
                     }
 
@@ -97,11 +101,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun home(navCon: NavController){
-
+    // Beneath all the flavor text (modifier things), it's just a simple white screen
+    // with a button to go to the whiteboard. The idea is that this will be updated with more and more-
+    // this is just so we can navigate for now.
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
-            .offset(x = 150.dp, y = 350.dp)){
+            .offset(x = 100.dp, y = 350.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
@@ -121,16 +127,17 @@ fun home(navCon: NavController){
 
 }
 @Composable
-fun whiteboard(){
+fun whiteboard(navCon: NavController){
     val context = LocalContext.current.applicationContext
     val coroutineScope = rememberCoroutineScope()
 
+    // Variables that we use later on, including the current pen color, the list of lines (on the canvas),
+    // the size of the brush, whether we're erasing or not, and whether we can draw or not.
     var currentColor by remember {mutableStateOf(Color.Black)}
     val lines = remember{ mutableStateListOf<Line>()}
     var brushSize by remember {mutableFloatStateOf(10f)}
     var isEraser by remember {mutableStateOf(false)}
     var canDraw by remember {mutableStateOf(true)}
-    var actualEnd = Offset(0f,0f)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {granted ->
@@ -144,7 +151,30 @@ fun whiteboard(){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
+    // A button within a box (for tidy placement). This button goes back to the home screen using the passed
+    // in navController.
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 25.dp, y = 50.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Button(onClick = {
+                    navCon.navigate("home")
+                }) {
+                    Text("home")
+                }
+            }
+        }
+    }
 
+    // Box containing a button that I'm using for debug purposes.
+    // Further along, the user will not be able to draw once the timer is up.
+    // I'm just testing with it now- this has no real purpose yet.
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
@@ -168,6 +198,10 @@ fun whiteboard(){
             }
         }
     }
+
+    // Box containing the widget for all the selectable colors, as well as whether you can erase or not.
+    // Clicking a color button will change your pen color to that color, and clicking the erase button will
+    // swap to erase mode.
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier=Modifier
             .fillMaxWidth()
@@ -186,7 +220,7 @@ fun whiteboard(){
             }
         }
     }
-    // I really don't like this, I want to fix this.
+    // Box that contains the pen size changer, the reset canvas button, and the save button.
     Box(modifier = Modifier.fillMaxSize()) {
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -216,6 +250,7 @@ fun whiteboard(){
             }
         }
     }
+        // The star of the show- the canvas.
         Box(modifier = Modifier
             .fillMaxSize()
             .offset(5.dp,200.dp)) {
@@ -227,6 +262,9 @@ fun whiteboard(){
                         detectDragGestures { change, dragAmount ->
                             change.consume()
                             // for a line to be considered within bounds it must start and end in the bounds
+                            // There was a weird issue where lines were being cut of incorrectly, and it had to do
+                            // with the fact I wasn't checking if the line started in the canvas. That is why I check if
+                            // all lines start and end in the canvas. Otherwise: it's not applied.
                             val startReal = change.position-dragAmount
                             val endReal = change.position
                             val startOBS = startReal.x < 0f || startReal.x > 1000f || startReal.y < 0f || startReal.y > 1000f
@@ -242,9 +280,9 @@ fun whiteboard(){
                                     color = if (isEraser) Color.White else currentColor,
                                     strokeWidth = brushSize
                                 )
-                                //if (change.position.component2() <= 1030 && change.position.component2() >= 50) {
+
                                     lines.add(line)
-                               //}
+
                             }
                         }
                     }) {
@@ -266,6 +304,8 @@ fun whiteboard(){
 @Composable
 fun selectColor(onColorSelected: (Color) -> Unit){
     val context = LocalContext.current.applicationContext
+    // Selectable color function that maps different colors to strings of their names, which shows the
+    // user what they switched to.
     val colorMap = mapOf(Color.Red to "Red",
         Color.Yellow to "Yellow",
         Color.Green to "Green",
@@ -312,6 +352,8 @@ fun BrushSizeSelector(currentSize: Float, onSizeSelected: (Float) -> Unit, isEra
 
 data class Line(val start: Offset, val end: Offset, val color: Color, val strokeWidth: Float = 10f)
 
+// All this fun stuff is for saving the drawing as an image. The code from this came from this video:
+// https://youtu.be/nMeO3XxjfBs?si=8Pkxk9B5QIwBqa8d
 suspend fun saveDrawing(context: Context, lines: List<Line>){
     val bitmap = Bitmap.createBitmap(1000,1000,Bitmap.Config.ARGB_8888)
     bitmap.applyCanvas {
@@ -353,18 +395,3 @@ suspend fun saveDrawing(context: Context, lines: List<Line>){
 }
 
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WhiteboardSimTheme {
-        Greeting("Android")
-    }
-}
