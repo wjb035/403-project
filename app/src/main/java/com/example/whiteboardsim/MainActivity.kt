@@ -6,7 +6,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.MediaStore
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -107,7 +109,7 @@ fun home(navCon: NavController){
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
-            .offset(x = 100.dp, y = 350.dp)){
+            .offset(x = 0.dp, y = 850.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
@@ -118,7 +120,7 @@ fun home(navCon: NavController){
                 Button(onClick = {
                     navCon.navigate("whiteboard")
                 }) {
-                    Text("Press here to go to the whiteboard")
+                    Text("Whiteboard")
                 }
 
             }
@@ -151,6 +153,10 @@ fun whiteboard(navCon: NavController){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
+
+
+
+
     // A button within a box (for tidy placement). This button goes back to the home screen using the passed
     // in navController.
     Box(modifier=Modifier.fillMaxSize()){
@@ -163,11 +169,13 @@ fun whiteboard(navCon: NavController){
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
+
                 Button(onClick = {
                     navCon.navigate("home")
                 }) {
                     Text("home")
                 }
+
             }
         }
     }
