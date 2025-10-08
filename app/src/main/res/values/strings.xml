@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Whiteboard Sim</string>
+
+    <!-- Hints for input fields -->
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+
+    <!-- Buttons -->
+    <string name="register_button">Register</string>
+    <string name="login_button">Login</string>
+
+    <!-- Links -->
+    <string name="go_to_login">Already have an account? Log in</string>
+    <string name="go_to_register">No account? Register</string>
+
+    <!-- Messages -->
+    <string name="redirecting_to_login">Redirecting to Login…</string>
+    <string name="register_now">Register now!</string>
 </resources>

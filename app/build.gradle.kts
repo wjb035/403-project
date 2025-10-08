@@ -60,4 +60,16 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.appcompat)
+    implementation(libs.retrofit)                                   // add retrofit library
+    //noinspection UseTomlInstead
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")    // add retrofit converter
+    //noinspection UseTomlInstead
+    implementation("androidx.core:core-ktx:1.17.0")                 // add core
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity)
+    implementation(libs.constraintlayout)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }
