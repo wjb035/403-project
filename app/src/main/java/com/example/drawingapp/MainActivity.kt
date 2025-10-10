@@ -1,37 +1,90 @@
 package com.example.drawingapp
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.drawingapp.databinding.ActivityMainBinding
+
+import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
+import com.example.drawingapp.ui.whiteboard
+import com.example.drawingapp.prompter.PromptScreen
+import com.example.drawingapp.ui.gallery.GalleryScreen
+import com.example.drawingapp.ui.home.HomeScreen
+import com.example.drawingapp.ui.profile.ProfileScreen
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.activity.ComponentActivity
+import androidx.compose.material3.*
+import androidx.compose.material3.Icon
 
 
-class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContent {
+            WhiteboardSimTheme {
+                // Creates a navController for switching between views. You start
+                // off in the home menu.
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+                val navController = rememberNavController()
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ) {
+                            val items = listOf("Home", "Gallery", "Profile")
+                            items.forEach { route ->
+                                NavigationBarItem(
+                                    icon = {//put something here later
+                                    },
+                                    label = { Text(route,color = MaterialTheme.colorScheme.onPrimary) },
+                                    selected = false,
+                                    onClick = { navController.navigate(route) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
 
-        val navView: BottomNavigationView = binding.navView
+                                )
+                            }
+                        }
+                    }
+                ) {innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home",
+                        modifier = Modifier.padding(innerPadding)
+                    ){
+                        // All the different routes. Each one is given a reference
+                        // to the nav controller so you can navigate between areas.
+                        composable(route = "home"){
+                            HomeScreen(navCon=navController)
+                        }
+                        composable(route = "prompt"){
+                            ProfileScreen(navCon=navController)
+                        }
+                        composable(route="whiteboard"){
+                            GalleryScreen(navCon=navController)
+                        }
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+                        // not part of the nav bar
+                        composable(route = "prompt"){
+                            PromptScreen(navCon=navController)
+                        }
+                        composable(route = "whiteboard"){
+                            whiteboard(navCon=navController)
+                        }
+                    }
+                }
 
+
+            }
+        }
 
     }
 

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -35,12 +36,14 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 }
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
@@ -55,4 +58,18 @@ dependencies {
     implementation("net.sf.extjwnl:extjwnl:2.0.5")        // library
     implementation("net.sf.extjwnl:extjwnl-data-wn31:1.2") // WordNet 3.1 dictionary
     implementation("androidx.constraintlayout:constraintlayout:2.2.1") // or latest
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.navigation.compose)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

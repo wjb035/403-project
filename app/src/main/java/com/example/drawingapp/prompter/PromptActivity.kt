@@ -1,55 +1,53 @@
 package com.example.drawingapp.prompter
-import android.os.Bundle
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.cancel
-import net.sf.extjwnl.dictionary.Dictionary
-import com.example.drawingapp.R
-import android.widget.Button
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.Alignment
+import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PromptActivity : AppCompatActivity() {
+@Composable
+fun PromptScreen(navCon: NavController) {
 
-    private val mainScope = MainScope()
+    // State for the prompt text
+    var promptText by remember { mutableStateOf("Loading your drawing prompt...") }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_prompt)
-
-        val textView: TextView = findViewById(R.id.promptTextView)
-        textView.text = "Loading your drawing prompt..."
-        textView.textSize = 24f
-        textView.setPadding(32, 32, 32, 32)
-
-
-        val backButton: Button = findViewById(R.id.backButton)
-        backButton.setOnClickListener {
-            finish() // closes this activity and goes back to previous screen
-        }
-
-        // Launch coroutine to fetch prompt in background
-        mainScope.launch {
-            try {
-                val wordFetcher = WordFetch(WordNetProvider.dictionary)
-                val prompt = wordFetcher.getDrawingPrompt()
-                withContext(Dispatchers.Main) {
-                    textView.text = prompt
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    textView.text = "Did not load prompt: choi"
-                }
+    // Launch coroutine to fetch prompt in background
+    LaunchedEffect(Unit){
+        try {
+            val wordFetcher = WordFetch(WordNetProvider.dictionary) // <-- use shared dictionary
+            val prompt = withContext(Dispatchers.Default) {
+                wordFetcher.getDrawingPrompt()
             }
-
+            promptText = prompt
+        } catch (e: Exception) {
+            promptText = "Did not load prompt: ${e.localizedMessage}"
         }
-
+    }
+    // UI STUFF
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = promptText,
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = {
+            navCon.popBackStack() // <-- acts like the back button
+        }) {
+            Text("Back")
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mainScope.cancel()
-    }
 }
