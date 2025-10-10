@@ -18,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
-
+import com.example.whiteboardsim.ui.leaderboard
 
 
 class MainActivity : ComponentActivity() {
@@ -72,6 +72,9 @@ class MainActivity : ComponentActivity() {
                             GalleryScreen(navCon=navController)
                         }
 
+                        composable(route = "leaderboard"){
+                            leaderboard(navCon=navController)
+                        }
                         // not part of the nav bar
                         composable(route = "prompt"){
                             PromptScreen(navCon=navController)

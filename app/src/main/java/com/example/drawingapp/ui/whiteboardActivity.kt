@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
+import android.os.CountDownTimer
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -71,7 +72,11 @@ fun whiteboard(navCon: NavController){
     val lines = remember{ mutableStateListOf<Line>()}
     var brushSize by remember {mutableFloatStateOf(10f)}
     var isEraser by remember {mutableStateOf(false)}
-    var canDraw by remember {mutableStateOf(true)}
+    var canDraw by remember {mutableStateOf(false)}
+    var remainingTime by remember{mutableStateOf(10000L)}
+    var countdown by remember{mutableStateOf("Press \"Ready\" when you're ready to draw!")}
+    var userHasStarted by remember{mutableStateOf(false)}
+    var prompt by remember {mutableStateOf("undecided!")}
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {granted ->
@@ -80,13 +85,55 @@ fun whiteboard(navCon: NavController){
 
         }
     }
+    LaunchedEffect(userHasStarted) {
+        if (userHasStarted) {
+            if (remainingTime > 0) {
+                object : CountDownTimer(remainingTime, 1000) {
+
+                    override fun onTick(millisUntilFinished: Long) {
+                        remainingTime = millisUntilFinished
+                        val seconds = millisUntilFinished / 1000
+                        countdown = String.format("%02d", seconds % 60)
+
+                    }
+
+                    override fun onFinish() {
+                        countdown = "Time's up!"
+                        canDraw = false
+                    }
+                }.start()
+            }
+        }
+    }
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 120.dp, y = 20.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
 
+                Button(onClick = {
+                    if (!userHasStarted) {
+                        userHasStarted = true
+                        canDraw = true
+                    }
+                }) {
+                    Text("Ready?")
+                }
+
+            }
+        }
+    }
 
 
     // A button within a box (for tidy placement). This button goes back to the home screen using the passed
@@ -111,11 +158,27 @@ fun whiteboard(navCon: NavController){
             }
         }
     }
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 50.dp, y = 150.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(text=countdown,
+                    modifier=Modifier,
+                    fontSize = 18.sp)
 
+            }
+        }
+    }
     // Box containing a button that I'm using for debug purposes.
     // Further along, the user will not be able to draw once the timer is up.
     // I'm just testing with it now- this has no real purpose yet.
-    Box(modifier=Modifier.fillMaxSize()){
+    /*Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
             .offset(x = 150.dp, y = 700.dp)){
@@ -137,7 +200,7 @@ fun whiteboard(navCon: NavController){
                 }
             }
         }
-    }
+    }*/
 
     // Box containing the widget for all the selectable colors, as well as whether you can erase or not.
     // Clicking a color button will change your pen color to that color, and clicking the erase button will
@@ -145,7 +208,7 @@ fun whiteboard(navCon: NavController){
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier=Modifier
             .fillMaxWidth()
-            .offset(x=100.dp,y=800.dp)){
+            .offset(x=100.dp,y=650.dp)){
             Row(Modifier.fillMaxWidth()
                 .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
