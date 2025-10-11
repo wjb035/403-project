@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:importantForAutofill="no"
+    android:inputType="textEmailAddress"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:theme="@style/Theme.LoginTestApplication">
+
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="138dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/in_app_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.049"
+        tools:ignore="ImageContrastCheck" />
+
+    <!-- username field below -->
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="370dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/white"
+        android:hint="@string/username_hint"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="#263238"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.261" />
+
+    <!-- password field below -->
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="370dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/white"
+        android:hint="@string/password_hint"
+        android:importantForAutofill="no"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textColorHint="#263238"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.335" />
+
+
+    <!-- login button below -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        android:layout_width="304dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/dark_bb"
+        android:text="@string/login_button"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.509" />
+
+    <!-- go to register button -->
+    <TextView
+        android:id="@+id/tvGoToRegister"
+        android:layout_width="146dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:padding="6dp"
+        android:text="@string/go_to_register"
+        android:textAlignment="center"
+        android:textColor="#1A237E"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.579"
+        tools:ignore="TextSizeCheck" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
