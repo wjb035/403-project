@@ -8,6 +8,7 @@ import com.example.drawingapp.prompter.PromptScreen
 import com.example.drawingapp.ui.gallery.GalleryScreen
 import com.example.drawingapp.ui.home.HomeScreen
 import com.example.drawingapp.ui.profile.ProfileScreen
+import com.example.drawingapp.ui.profile.OldProfileScreen
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
