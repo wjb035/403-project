@@ -77,7 +77,6 @@ fun whiteboard(navCon: NavController){
     var remainingTime by remember{mutableStateOf(45000L)}
     var countdown by remember{mutableStateOf("Press \"Ready\" when you're ready to draw!")}
     var userHasStarted by remember{mutableStateOf(false)}
-    var prompt by remember {mutableStateOf("undecided!")}
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {granted ->
@@ -86,6 +85,15 @@ fun whiteboard(navCon: NavController){
 
         }
     }
+    // PROMPT LOAD HERE
+    var prompt by remember {mutableStateOf("Loading daily prompt...")}
+    LaunchedEffect(Unit) {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val savedPrompt = prefs.getString("daily_prompt", null)
+        prompt = savedPrompt ?: "No daily prompt available yet."
+    }
+
+
     LaunchedEffect(userHasStarted) {
         if (userHasStarted) {
             if (remainingTime > 0) {
@@ -121,7 +129,7 @@ fun whiteboard(navCon: NavController){
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                Text(text= "Today's prompt is: " + prompt,
+                Text(text= prompt,
                     modifier=Modifier,
                     fontSize = 18.sp)
 

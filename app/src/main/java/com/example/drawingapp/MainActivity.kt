@@ -65,16 +65,14 @@ class MainActivity : ComponentActivity() {
                         composable(route = "home"){
                             HomeScreen(navCon=navController)
                         }
-                        composable(route = "prompt"){
+                        composable(route = "profile"){
                             ProfileScreen(navCon=navController)
                         }
-                        composable(route="whiteboard"){
-                            GalleryScreen(navCon=navController)
-                        }
-
-                        composable(route = "leaderboard"){
+                        composable(route="gallery"){
                             leaderboard(navCon=navController)
                         }
+
+
                         // not part of the nav bar
                         composable(route = "prompt"){
                             PromptScreen(navCon=navController)
