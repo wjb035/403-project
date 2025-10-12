@@ -110,7 +110,23 @@ fun whiteboard(navCon: NavController){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 50.dp, y = 100.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(text= "Today's prompt is: " + prompt,
+                    modifier=Modifier,
+                    fontSize = 18.sp)
 
+            }
+        }
+    }
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
