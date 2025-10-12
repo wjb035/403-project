@@ -57,16 +57,16 @@ fun leaderboard(navCon: NavController) {
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
-            .offset(x = 60.dp, y = 100.dp)){
+            .offset(x = 25.dp, y = 50.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                Text(text="WIP LEADERBOARD",
+                Text(text="Gallery Work in Progress",
                     modifier=Modifier,
-                    fontSize = 35.sp)
+                    fontSize = 30.sp)
 
             }
         }
@@ -81,24 +81,10 @@ fun leaderboard(navCon: NavController) {
         "A", "B", "C", "D"
     ) + ((0..100).map { it.toString() })
     LazyColumn(modifier = Modifier
-        .offset(0.dp, 150.dp)
+        .offset(0.dp, 100.dp)
     ) {
         items(items = list, itemContent = { item ->
             when (item) {
-                /*"A" -> {
-                    Text(text = item, style = TextStyle(fontSize = 80.sp))
-                }
-                "B" -> {
-                    Button(onClick = {}) {
-                        Text(text = item, style = TextStyle(fontSize = 80.sp))
-                    }
-                }
-                "C" -> {
-                    //Do Nothing
-                }
-                "D" -> {
-                    Text(text = item)
-                }*/
                 else -> {
                     IconButton(onClick = {showDialog = true},
                         modifier = Modifier

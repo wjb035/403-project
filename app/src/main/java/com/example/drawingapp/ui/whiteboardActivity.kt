@@ -14,6 +14,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -73,7 +74,7 @@ fun whiteboard(navCon: NavController){
     var brushSize by remember {mutableFloatStateOf(10f)}
     var isEraser by remember {mutableStateOf(false)}
     var canDraw by remember {mutableStateOf(false)}
-    var remainingTime by remember{mutableStateOf(10000L)}
+    var remainingTime by remember{mutableStateOf(45000L)}
     var countdown by remember{mutableStateOf("Press \"Ready\" when you're ready to draw!")}
     var userHasStarted by remember{mutableStateOf(false)}
     var prompt by remember {mutableStateOf("undecided!")}
@@ -191,32 +192,7 @@ fun whiteboard(navCon: NavController){
             }
         }
     }
-    // Box containing a button that I'm using for debug purposes.
-    // Further along, the user will not be able to draw once the timer is up.
-    // I'm just testing with it now- this has no real purpose yet.
-    /*Box(modifier=Modifier.fillMaxSize()){
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .offset(x = 150.dp, y = 700.dp)){
-            Row(
-                Modifier.fillMaxWidth()
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Button(onClick = {
-                    if (canDraw){
-                        canDraw = false
-                    }
-                    else{
-                        canDraw = true
-                    }
-                }) {
-                    Text("Lock")
-                }
-            }
-        }
-    }*/
+
 
     // Box containing the widget for all the selectable colors, as well as whether you can erase or not.
     // Clicking a color button will change your pen color to that color, and clicking the erase button will
@@ -275,7 +251,8 @@ fun whiteboard(navCon: NavController){
             .offset(5.dp,200.dp)) {
             Canvas(
                 modifier = Modifier.size(width = 400.dp, height = 400.dp)
-                    .background(Color.Red)
+                    .background(Color.White)
+                    .border(6.dp,Color.Black)
                     .pointerInput(true) {
 
                         detectDragGestures { change, dragAmount ->
