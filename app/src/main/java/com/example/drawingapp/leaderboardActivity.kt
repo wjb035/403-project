@@ -71,9 +71,14 @@ fun leaderboard(navCon: NavController) {
             }
         }
     }
+    // showDialog lets us know when to do the pop-up
+    // postID is a temporary identification number associated with each post
     var showDialog by remember {mutableStateOf(false)}
+    var postID by remember {mutableStateOf("NULL")}
+
+    // When the user clicks the post button, the alertdialog function is triggered
     if  (showDialog){
-        AlertDialog(onDismiss = {showDialog = false})
+        AlertDialog(onDismiss = {showDialog = false}, postID)
     }
 
 
@@ -84,9 +89,12 @@ fun leaderboard(navCon: NavController) {
         .offset(0.dp, 100.dp)
     ) {
         items(items = list, itemContent = { item ->
+            //LazyColumn displays one hundred IconButtons- the images for which are all currently sample images (not real data)
             when (item) {
                 else -> {
-                    IconButton(onClick = {showDialog = true},
+                    //When the IconButton is pressed, stores the item id in the postID variable, and showDialog is marked as true.
+                    IconButton(onClick = {showDialog = true
+                                         postID = item},
                         modifier = Modifier
                             .width(400.dp).height(300.dp)
                     ) {
@@ -102,8 +110,11 @@ fun leaderboard(navCon: NavController) {
     }
 }
 
+
+//Primarily boilerplate code for displaying the necessary items- the image is currently kept as an IconButton and the like button
+// has not been linked to any actual database functionality yet.
 @Composable
-fun AlertDialog(onDismiss: ()-> Unit){
+fun AlertDialog(onDismiss: ()-> Unit, postID: String){
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {},
@@ -124,7 +135,7 @@ fun AlertDialog(onDismiss: ()-> Unit){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ){
-                Text(text="POST DETAILS", fontSize = 25.sp, color = Color.Black)
+                Text(text="POST ID: " + postID, fontSize = 25.sp, color = Color.Black)
 
                 IconButton(onClick = {},
                     modifier = Modifier

@@ -388,7 +388,7 @@ suspend fun saveDrawing(context: Context, lines: List<Line>){
 
     }
     else{
-        Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Unable to save, please try again.", Toast.LENGTH_SHORT).show()
     }
 }
 

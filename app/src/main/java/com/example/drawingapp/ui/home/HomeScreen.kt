@@ -35,7 +35,7 @@ fun HomeScreen(navCon: NavController) {
         Button(onClick = {
             navCon.navigate("leaderboard")
         }) {
-            Text("Go to Leaderboard")
+            Text("Go to Gallery")
         }
     }
 
