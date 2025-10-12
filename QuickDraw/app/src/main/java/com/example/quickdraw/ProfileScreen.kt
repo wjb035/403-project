@@ -325,7 +325,7 @@ fun PhotoClick(
             .background(Color.Black.copy(alpha = 0.5f))
             .clickable(onClick = onDismiss)
         )
-        // The main image fills width, respects aspect ratio
+
         Image(
             painter = post,
             contentDescription = "Selected image",
@@ -339,12 +339,14 @@ fun PhotoClick(
             onClick = { isToggled = !isToggled },
             modifier = Modifier
                 .align(alignment = Alignment.Center)
+                .offset(y = 200.dp)
         ) {
             Image(
                 painter = if (isToggled) painterResource(R.drawable.filled_heart)
                 else painterResource(R.drawable.empty_heart),
                 contentDescription = "Heart",
-                modifier = Modifier.size(25.dp),
+                modifier = Modifier
+                    .size(25.dp)
             )
         }
 
