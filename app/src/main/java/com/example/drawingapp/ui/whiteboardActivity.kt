@@ -60,7 +60,18 @@ import kotlin.collections.forEach
 import kotlin.io.use
 import kotlin.text.toFloatOrNull
 import kotlin.to
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
+
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "drawData")
 
 @Composable
 fun whiteboard(navCon: NavController){
@@ -74,9 +85,17 @@ fun whiteboard(navCon: NavController){
     var brushSize by remember {mutableFloatStateOf(10f)}
     var isEraser by remember {mutableStateOf(false)}
     var canDraw by remember {mutableStateOf(false)}
-    var remainingTime by remember{mutableStateOf(45000L)}
+    var remainingTime by remember{mutableStateOf(10000L)}
     var countdown by remember{mutableStateOf("Press \"Ready\" when you're ready to draw!")}
     var userHasStarted by remember{mutableStateOf(false)}
+
+    val drawData = booleanPreferencesKey("drawData")
+    /*val drawFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            // No type safety.
+            preferences[drawData] ?: true
+        }
+*/
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {granted ->
@@ -109,6 +128,9 @@ fun whiteboard(navCon: NavController){
                     override fun onFinish() {
                         countdown = "Time's up!"
                         canDraw = false
+                        coroutineScope.launch {
+                            incrementCounter(context, drawData, false)
+                        }
                     }
                 }.start()
             }
@@ -136,6 +158,7 @@ fun whiteboard(navCon: NavController){
             }
         }
     }
+
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
@@ -154,6 +177,32 @@ fun whiteboard(navCon: NavController){
                     }
                 }) {
                     Text("Ready?")
+                }
+
+            }
+        }
+    }
+
+    // Debug button that simply refreshes the dataStore value. It is not reset otherwise, making
+    // this a temporary yet necessary evil. This will be removed in the near future.
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 220.dp, y = 20.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                Button(onClick = {
+                    coroutineScope.launch {
+                        incrementCounter(context, drawData, true)
+
+                    }
+                }) {
+                    Text("Reset?")
                 }
 
             }
@@ -208,7 +257,7 @@ fun whiteboard(navCon: NavController){
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier=Modifier
             .fillMaxWidth()
-            .offset(x=100.dp,y=650.dp)){
+            .offset(x=100.dp,y=610.dp)){
             Row(Modifier.fillMaxWidth()
                 .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -243,7 +292,9 @@ fun whiteboard(navCon: NavController){
                 Button(onClick = { lines.clear() }) {
                     Text("Reset")
                 }
-
+                Button(onClick = { isEraser = true }) {
+                    Text("Eraser")
+                }
                 Button(onClick = {
                     coroutineScope.launch {
                         saveDrawing(context, lines)
@@ -262,7 +313,12 @@ fun whiteboard(navCon: NavController){
                     .background(Color.White)
                     .border(6.dp,Color.Black)
                     .pointerInput(true) {
-
+                        val drawFlow: Flow<Boolean> = context.dataStore.data
+                            .map { settings ->
+                                // No type safety.
+                                settings[drawData] ?: true
+                            }
+                        val isDailyDrawing = drawFlow.first()
                         detectDragGestures { change, dragAmount ->
                             change.consume()
                             // for a line to be considered within bounds it must start and end in the bounds
@@ -276,7 +332,8 @@ fun whiteboard(navCon: NavController){
 
                             // If the user is within bounds, and is able to draw (timer hasn't expired,
                             // the line is applied.
-                            if (!endOBS && !startOBS && canDraw) {
+
+                            if (!endOBS && !startOBS && canDraw && isDailyDrawing) {
                                 val line = Line(
                                     start = change.position - dragAmount,
 
@@ -304,6 +361,12 @@ fun whiteboard(navCon: NavController){
     }
 }
 
+
+suspend fun incrementCounter(context: Context,drawData: Preferences.Key<Boolean>, result: Boolean) {
+    context.dataStore.edit { settings ->
+        settings[drawData] = result
+    }
+}
 
 @Composable
 fun selectColor(onColorSelected: (Color) -> Unit){
