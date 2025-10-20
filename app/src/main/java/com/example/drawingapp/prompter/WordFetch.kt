@@ -36,7 +36,7 @@ class WordFetch(private val dictionary: Dictionary = Dictionary.getDefaultResour
         // 2 pass algorithm, reworked from ground up
         // STEP 1: calculate the weight
         var totalWeight = 0L
-        val maxWeight = 45
+        val maxWeight = 30
         val validCandidates = mutableListOf<Pair<String, Int>>() // much smaller than all synsets (saves memory)
 
         // iterates over the synsets, filters out unused words and multi word phrases
@@ -87,7 +87,9 @@ class WordFetch(private val dictionary: Dictionary = Dictionary.getDefaultResour
 
     // BLACKLIST OF WEIRD OUTLIERS
     private fun isBlacklisted(word: String): Boolean {
-        val blacklist = setOf("bing", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "person", "stravinsky", "thing")
+        val blacklist = setOf("bing", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "person", "stravinsky", "thing",
+            "go", "first", "second", "third", "more", "make", "fifty", "put", "consider", "word", "particular",
+            "keep", "exceed", "suppose")
         val lower = word.lowercase()
         return lower in blacklist || (lower.endsWith("ing") && lower.dropLast(3) in blacklist)
     }
