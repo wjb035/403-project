@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
-import com.example.whiteboardsim.ui.leaderboard
+import com.example.drawingapp.leaderboard
 
 
 class MainActivity : ComponentActivity() {

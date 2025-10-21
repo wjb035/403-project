@@ -1,4 +1,4 @@
-package com.example.whiteboardsim.ui
+package com.example.drawingapp
 
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
