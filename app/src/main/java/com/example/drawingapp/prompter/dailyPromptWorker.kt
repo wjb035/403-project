@@ -13,13 +13,22 @@ import androidx.work.PeriodicWorkRequestBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import com.example.drawingapp.ui.dataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class DailyPromptWorker (private val appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params){
     override suspend fun doWork(): Result = withContext(Dispatchers.Default) {
         try {
             val wordFetcher = WordFetch()
             val prompt = wordFetcher.getDrawingPrompt()
-
+            val drawData = booleanPreferencesKey("drawData")
+            appContext.dataStore.edit { settings ->
+                settings[drawData] = true
+            }
             // Save daily prompt to SharedPreferences
             val prefs = applicationContext.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
@@ -43,7 +52,7 @@ class DailyPromptWorker (private val appContext: Context, params: WorkerParamete
                 0L
             } else {
                 val startHour = 9
-                val endHour = 14
+                val endHour = 17
                 val randomHour = (startHour until endHour).random()
                 val randomMinute = (0 until 59).random()
 

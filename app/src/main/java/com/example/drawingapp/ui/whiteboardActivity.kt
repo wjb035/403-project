@@ -196,14 +196,14 @@ fun whiteboard(navCon: NavController){
                 verticalAlignment = Alignment.CenterVertically
             ){
 
-                Button(onClick = {
+               /* Button(onClick = {
                     coroutineScope.launch {
                         incrementCounter(context, drawData, true)
 
                     }
                 }) {
                     Text("Reset?")
-                }
+                }*/
 
             }
         }
