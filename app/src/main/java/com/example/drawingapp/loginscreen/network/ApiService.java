@@ -1,6 +1,6 @@
 package com.example.drawingapp.loginscreen.network;
 
-import com.basketball.logintestapplication.model.User;
+import com.example.drawingapp.loginscreen.model.User;
 
 import java.util.Map;
 
