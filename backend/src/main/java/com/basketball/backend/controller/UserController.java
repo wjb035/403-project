@@ -46,4 +46,40 @@ public class UserController {
         // Return the user info if login is successful
         return user;
     }
+
+    @PostMapping("/follow/{username}")
+    public User followUser(@PathVariable String username, @RequestBody User user) {
+        User currentUser = userRepository.findByUsername(username);
+        User userToFollow = userRepository.findByUsername(user.getUsername());
+
+        if (currentUser == null || userToFollow == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        currentUser.getFollowing().add(userToFollow);
+        userToFollow.getFollowers().add(currentUser);
+
+        userRepository.save(currentUser);
+        userRepository.save(userToFollow);
+
+        return userToFollow;
+    }
+
+    @PostMapping("/unfollow/{username}")
+    public User unfollowUser(@PathVariable String username, @RequestBody User user) {
+        User currentUser = userRepository.findByUsername(username);
+        User userToUnfollow = userRepository.findByUsername(user.getUsername());
+
+        if (currentUser == null || userToUnfollow == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        currentUser.getFollowing().remove(userToUnfollow);
+        userToUnfollow.getFollowers().remove(currentUser);
+
+        userRepository.save(currentUser);
+        userRepository.save(userToUnfollow);
+
+        return userToUnfollow;
+    }
 }

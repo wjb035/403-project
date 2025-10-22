@@ -23,103 +23,90 @@ import retrofit2.Response
  * This activity allows a new user to create an account by sending
  * a POST request with username and password to your Spring Boot API.
  */
-class RegisterActivity : AppCompatActivity() {
+
+@Composable
+fun RegisterScreen(navCon: NavController) {
     // Declare UI components
-    var etUsername: EditText? = null
-    var etPassword: EditText? = null
-    var etConfirmPassword: EditText? = null // Input fields
-    var btnRegister: Button? = null // Register button
-    var tvGoToLogin: TextView? = null // Link to go back to login screen
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // connect this activity to its layout file (res/layout/activity_register.xml)
-        setContentView(R.layout.activity_register)
+    val api = remember { RetrofitClient.getClient().create(ApiService::class.java) }
 
-        // initialize UI components
-        etUsername = findViewById(R.id.etUsername)
-        etPassword = findViewById(R.id.etPassword)
-        etConfirmPassword = findViewById(R.id.etConfirmPassword)
-        btnRegister = findViewById(R.id.btnRegister)
-        tvGoToLogin = findViewById(R.id.tvGoToLogin)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center
 
-        // Create Retrofit API client
-        val api: ApiService = RetrofitClient.getClient().create<ApiService>(ApiService::class.java)
+    ) {
+        Text("Register", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(16.dp))
 
-        // When the user taps the "Register" button:
-        btnRegister.setOnClickListener({ v ->
-            // Read user input
-            val username = etUsername.getText().toString()
-            val password = etPassword.getText().toString()
-            val confirm = etConfirmPassword.getText().toString()
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
+            singleLine = true
+        )
 
-            // Basic validation checks
-            if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
-                Toast.makeText(this@RegisterActivity, "Please fill all fields", Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
-            }
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation()
+        )
 
-            if (password != confirm) {
-                Toast.makeText(this@RegisterActivity, "Passwords do not match", Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
-            }
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Confirm Password") },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation()
+        )
 
+        Spacer(Modifier.height(16.dp))
 
-            // Create request body for the API
-            // Map<String, String> userData = new HashMap<>();
-            // userData.put("username", username);
-            // userData.put("password", password);
+        Button(
+            onClick = {
+                if (password != confirmPassword) {
+                    Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                val user = User(username = username, password = password)
+                api.register(user).enqueue(object : Callback<User> {
+                    override fun onResponse(call: Call<User>, response: Response<User>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(context, "Registered sucessfully", Toast.LENGTH_SHORT)
+                                .show()
+                            navCon.navigate("login") {
+                                popUpTo("register") { inclusive = true }
+                            }
 
-
-            // Send POST request to /api/users/register
-            val user = User()
-            user.username = username
-            user.password = password
-            api.register(user).enqueue(object : Callback<User?> {
-                override fun onResponse(
-                    @NonNull call: Call<User?>,
-                    @NonNull response: Response<User?>
-                ) {
-                    if (response.isSuccessful()) {
-                        // Registration successful - notify user
-                        Toast.makeText(
-                            this@RegisterActivity,
-                            "Registration successful!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        // Redirect back to LoginActivity
-                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
-                        finish() // Close this screen so the user can't go back with Back button
-                    } else {
-                        // API returned an error (e.g. username already taken)
-                        Toast.makeText(
-                            this@RegisterActivity,
-                            "Registration failed",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        } else {
+                            Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
-                }
+                    override fun onFailure(call: Call<User>, t: Throwable) {
+                        Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    }
 
-                override fun onFailure(@NonNull call: Call<User?>, @NonNull t: Throwable) {
-                    // Connection/network failure
-                    Builder(this@RegisterActivity)
-                        .setTitle("Registration Error") // Dialog title
-                        .setMessage("Error: " + t.message) // Dialog message
-                        .setPositiveButton("OK", null) // OK button to dismiss
-                        .show()
-                }
-            })
-        })
+                })
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Register")
+        }
+        Spacer(Modifier.height(12.dp))
 
-        // When user taps "Already have an account? Log in"
-        tvGoToLogin.setOnClickListener({ v ->
-            val intent: Intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        })
+        TextButton(onClick = { navCon.navigate("login")}) {
+            Text("Already have an account? Log in")
+        }
+
     }
+
 }
 

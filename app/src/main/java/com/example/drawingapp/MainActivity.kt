@@ -16,10 +16,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
 import com.example.drawingapp.leaderboard
+import com.example.drawingapp.loginscreen.LoginScreen
+import com.example.drawingapp.loginscreen.RegisterScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -31,34 +36,40 @@ class MainActivity : ComponentActivity() {
                 // off in the home menu.
 
                 val navController = rememberNavController()
+                // lets you track which screren is currently visible
+                val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = currentBackStackEntry?.destination?.route
                 Scaffold(
                     bottomBar = {
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ) {
-                            val items = listOf("Home", "Gallery", "Profile")
-                            items.forEach { route ->
-                                NavigationBarItem(
-                                    icon = {//put something here later
-                                    },
-                                    label = { Text(route,color = MaterialTheme.colorScheme.onPrimary) },
-                                    selected = false,
-                                    onClick = { navController.navigate(route) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
+                        if (currentRoute in listOf("home", "gallery", "profile", "whiteboard", "prompt")){
+                            NavigationBar(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ) {
+                                val items = listOf("Home", "Gallery", "Profile")
+                                items.forEach { route ->
+                                    NavigationBarItem(
+                                        icon = {//put something here later
+                                        },
+                                        label = { Text(route,color = MaterialTheme.colorScheme.onPrimary) },
+                                        selected = false,
+                                        onClick = { navController.navigate(route) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                                            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
 
-                                )
-                            }
+                                    )
+                                }
+                        }
+
                         }
                     }
                 ) {innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "home",
+                        startDestination = "login",
                         modifier = Modifier.padding(innerPadding)
                     ){
                         // All the different routes. Each one is given a reference
@@ -73,7 +84,6 @@ class MainActivity : ComponentActivity() {
                             leaderboard(navCon=navController)
                         }
 
-
                         // not part of the nav bar
                         composable(route = "prompt"){
                             PromptScreen(navCon=navController)
@@ -81,6 +91,13 @@ class MainActivity : ComponentActivity() {
                         composable(route = "whiteboard"){
                             whiteboard(navCon=navController)
                         }
+                        composable(route = "login"){
+                            LoginScreen(navCon=navController)
+                        }
+                        composable(route = "register"){
+                            RegisterScreen(navCon=navController)
+                        }
+
                     }
                 }
 
