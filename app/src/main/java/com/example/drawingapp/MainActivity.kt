@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                 ) {innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "login",
+                        startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
                     ){
                         // All the different routes. Each one is given a reference
