@@ -12,6 +12,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // One to many relationship between user and drawing
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Drawing> drawings = new ArrayList<>();
+
     // username must be unique and not be empty
     @Column(unique = true, nullable = false)
     private String username;

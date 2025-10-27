@@ -1,6 +1,7 @@
 package com.basketball.backend.model;
 
 import jakarta.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "drawings")
@@ -39,11 +40,13 @@ public class Drawing {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
     public int getLikesCount() { return likesCount; }
+    public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
 
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt  = createdAt; }
+
     public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt  = createdAt; }
+
 
 
 
