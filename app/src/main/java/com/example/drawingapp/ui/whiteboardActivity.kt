@@ -3,15 +3,19 @@ package com.example.drawingapp.ui
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.health.connect.datatypes.Device
+import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -51,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.applyCanvas
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
@@ -88,8 +93,11 @@ fun whiteboard(navCon: NavController){
     var remainingTime by remember{mutableStateOf(10000L)}
     var countdown by remember{mutableStateOf("Press \"Ready\" when you're ready to draw!")}
     var userHasStarted by remember{mutableStateOf(false)}
-
+    var showButton by remember{mutableStateOf(false)}
     val drawData = booleanPreferencesKey("drawData")
+    var displayReady by remember{mutableStateOf(true)}
+    var uriDay by remember{mutableStateOf<Uri?>(null)}
+    var getUriFromCanvas by remember { mutableStateOf(false) }
     /*val drawFlow: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             // No type safety.
@@ -126,11 +134,15 @@ fun whiteboard(navCon: NavController){
                     }
 
                     override fun onFinish() {
+
                         countdown = "Time's up!"
                         canDraw = false
                         coroutineScope.launch {
                             incrementCounter(context, drawData, false)
                         }
+
+                        showButton = true
+
                     }
                 }.start()
             }
@@ -139,6 +151,52 @@ fun whiteboard(navCon: NavController){
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+    }
+
+    LaunchedEffect(Unit){
+        displayReady = getHasDrawn(context, drawData)
+    }
+    //LaunchedEffect(getUriFromCanvas){
+        //uriDay= saveDrawing(context,lines, true)
+    //}
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 240.dp, y = 20.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                AnimatedVisibility(
+                    visible = showButton,
+
+                ) {Button(onClick = {
+                    coroutineScope.launch {
+                        uriDay = saveDrawing(context, lines, true)
+                    }
+                    // KNOWN ISSUE, IMAGE DOESN'T WORK THE FIRST TIME AROUND
+
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        //putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                        putExtra(Intent.EXTRA_STREAM, uriDay)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        type = "image/png"
+                        //type = "text/plain"
+                    }
+
+
+                    context.startActivity(sendIntent)
+                }) {
+                    Text("Share")
+                }
+
+            }}
         }
     }
     Box(modifier=Modifier.fillMaxSize()){
@@ -170,15 +228,20 @@ fun whiteboard(navCon: NavController){
                 verticalAlignment = Alignment.CenterVertically
             ){
 
-                Button(onClick = {
-                    if (!userHasStarted) {
-                        userHasStarted = true
-                        canDraw = true
-                    }
-                }) {
-                    Text("Ready?")
-                }
+                AnimatedVisibility(
 
+                    visible = displayReady
+
+                    ) {
+                    Button(onClick = {
+                        if (!userHasStarted) {
+                            userHasStarted = true
+                            canDraw = true
+                        }
+                    }) {
+                        Text("Ready?")
+                    }
+                }
             }
         }
     }
@@ -188,7 +251,7 @@ fun whiteboard(navCon: NavController){
     Box(modifier=Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxWidth()
-            .offset(x = 220.dp, y = 20.dp)){
+            .offset(x = 240.dp, y = 80.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
@@ -196,14 +259,14 @@ fun whiteboard(navCon: NavController){
                 verticalAlignment = Alignment.CenterVertically
             ){
 
-               /* Button(onClick = {
+                Button(onClick = {
                     coroutineScope.launch {
                         incrementCounter(context, drawData, true)
 
                     }
                 }) {
                     Text("Reset?")
-                }*/
+                }
 
             }
         }
@@ -297,7 +360,7 @@ fun whiteboard(navCon: NavController){
                 }
                 Button(onClick = {
                     coroutineScope.launch {
-                        saveDrawing(context, lines)
+                        saveDrawing(context, lines, true)
                     }
                 }) {
                     Text("Save")
@@ -360,7 +423,14 @@ fun whiteboard(navCon: NavController){
         }
     }
 }
-
+suspend fun getHasDrawn(context: Context,drawData: Preferences.Key<Boolean>): Boolean{
+    val drawFlow: Flow<Boolean> = context.dataStore.data
+        .map { settings ->
+            // No type safety.
+            settings[drawData] ?: true
+        }
+    return drawFlow.first()
+}
 
 suspend fun incrementCounter(context: Context,drawData: Preferences.Key<Boolean>, result: Boolean) {
     context.dataStore.edit { settings ->
@@ -423,7 +493,7 @@ data class Line(val start: Offset, val end: Offset, val color: Color, val stroke
 
 // All this fun stuff is for saving the drawing as an image. The code from this came from this video:
 // https://youtu.be/nMeO3XxjfBs?si=8Pkxk9B5QIwBqa8d
-suspend fun saveDrawing(context: Context, lines: List<Line>){
+suspend fun saveDrawing(context: Context, lines: List<Line>,downloadToDevice: Boolean): Uri? {
     val bitmap = Bitmap.createBitmap(1000,1000,Bitmap.Config.ARGB_8888)
     bitmap.applyCanvas {
         drawColor(android.graphics.Color.WHITE)
@@ -448,7 +518,7 @@ suspend fun saveDrawing(context: Context, lines: List<Line>){
     val resolver = context.contentResolver
     val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
-    if (uri != null){
+    if (uri != null && downloadToDevice){
         val outputStream: OutputStream? = resolver.openOutputStream(uri)
         outputStream.use {
             if (it != null){
@@ -461,6 +531,7 @@ suspend fun saveDrawing(context: Context, lines: List<Line>){
     else{
         Toast.makeText(context, "Unable to save, please try again.", Toast.LENGTH_SHORT).show()
     }
+    return uri
 }
 
 

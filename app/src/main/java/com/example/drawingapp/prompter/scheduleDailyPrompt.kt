@@ -7,7 +7,7 @@ import android.content.Context
 
 class ScheduleDailyPrompt(private val context: Context) {
     fun schedule() {
-        DailyPromptWorker.scheduleNextPrompt(context, testing = true)
+        DailyPromptWorker.scheduleNextPrompt(context, testing = false)
     }
 }
 
