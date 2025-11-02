@@ -9,7 +9,6 @@ import com.basketball.backend.prompterBackendWordFetcher;
 import org.springframework.scheduling.annotation.Scheduled;
 import java.sql.Timestamp;
 import java.time.Instant;
-
 import java.util.Map;
 
 @RestController
