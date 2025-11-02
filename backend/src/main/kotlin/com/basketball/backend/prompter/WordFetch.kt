@@ -6,7 +6,7 @@ import net.sf.extjwnl.data.POS
 import net.sf.extjwnl.dictionary.Dictionary
 import kotlin.random.Random
 
-class WordFetch(private val dictionary: Dictionary = Dictionary.getDefaultResourceInstance()){
+public class WordFetch(private val dictionary: Dictionary = Dictionary.getDefaultResourceInstance()){
 
     // Get a nonblacklisted word, will try up to 10 times
     private fun getGoodWord(pos: POS): String? {

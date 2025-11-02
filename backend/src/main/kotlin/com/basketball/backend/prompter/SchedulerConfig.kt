@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 @Configuration
 @EnableScheduling
-class SchedulerConfig(private val promptController: PromptController) {
+public class SchedulerConfig(private val promptController: PromptController) {
 
     private val scheduler = ThreadPoolTaskScheduler().apply {
         poolSize = 1
