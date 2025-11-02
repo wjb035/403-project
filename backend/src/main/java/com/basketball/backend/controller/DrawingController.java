@@ -48,6 +48,6 @@ public class DrawingController {
         drawing.setLikesCount(drawing.getLikesCount().sub(1));
 
         drawingRepository.save(drawing);
-        return drawing
+        return drawingRepository.save(drawing);
     }
 }
