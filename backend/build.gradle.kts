@@ -20,16 +20,6 @@ kotlin {
     jvmToolchain(17) 
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("src/main/java", "src/main/kotlin"))
-        }
-		resources {
-            srcDir("src/main/resources")
-        }
-    }
-}
 
 repositories {
 	mavenCentral()   

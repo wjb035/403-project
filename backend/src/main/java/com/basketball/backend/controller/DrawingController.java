@@ -4,9 +4,8 @@ import com.basketball.backend.model.Drawing;
 import com.basketball.backend.repository.DrawingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
+
 
 
 @RestController
