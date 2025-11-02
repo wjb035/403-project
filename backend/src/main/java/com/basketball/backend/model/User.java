@@ -1,6 +1,8 @@
 package com.basketball.backend.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
 
 // This class defines the User entity that maps to the "user" table in MySQL.
 @Entity

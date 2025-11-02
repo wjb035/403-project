@@ -30,10 +30,9 @@ public class DrawingController {
             throw new RuntimeException("Drawing not found");
         }
 
-        drawing.setLikesCount(drawing.getLikesCount().add(1));
+        drawing.setLikesCount(drawing.getLikesCount() + 1);
 
-        drawingRepository.save(drawing);
-        return drawing
+        return drawingRepository.save(drawing);
     }
 
     @PostMapping("/unlike/{username}")
@@ -45,9 +44,8 @@ public class DrawingController {
             throw new RuntimeException("Drawing not found");
         }
 
-        drawing.setLikesCount(drawing.getLikesCount().sub(1));
+        drawing.setLikesCount(Math.max(0, drawing.getLikesCount() - 1));
 
-        drawingRepository.save(drawing);
         return drawingRepository.save(drawing);
     }
 }

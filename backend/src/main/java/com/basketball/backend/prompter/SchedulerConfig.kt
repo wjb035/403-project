@@ -1,4 +1,4 @@
-package com.basketball.backend.config
+package com.basketball.backend.prompter
 
 import com.basketball.backend.controller.PromptController
 import org.springframework.context.annotation.Configuration
@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit
 
 @Configuration
 @EnableScheduling
-
 class SchedulerConfig(private val promptController: PromptController) {
 
     private val scheduler = ThreadPoolTaskScheduler().apply {

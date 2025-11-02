@@ -1,6 +1,6 @@
 package com.basketball.backend.prompter
 
-import com.basketball.backend.prompter.WordFetch;
+import com.basketball.backend.prompter.WordFetch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 

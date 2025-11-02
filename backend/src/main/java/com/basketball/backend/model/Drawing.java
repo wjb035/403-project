@@ -1,6 +1,8 @@
 package com.basketball.backend.model;
 
 import jakarta.persistence.*;
+import java.sql.Timestamp;
+
 
 @Entity
 @Table(name = "drawings")
