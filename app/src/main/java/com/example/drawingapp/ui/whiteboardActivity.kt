@@ -148,6 +148,8 @@ fun whiteboard(navCon: NavController){
             }
         }
     }
+
+    // I don't think this is necessary? But I'm afraid to get rid of it.
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)

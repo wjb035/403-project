@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.example.drawingapp.prompter.DailyPromptWorker.Companion.scheduleNextPrompt
 import com.example.drawingapp.ui.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -38,7 +39,14 @@ class DailyPromptWorker (private val appContext: Context, params: WorkerParamete
             }
 
             scheduleNextPrompt(appContext)
-
+            val work2 = OneTimeWorkRequestBuilder<workLock>()
+                .setInitialDelay(1, TimeUnit.HOURS)
+                .build()
+            WorkManager.getInstance(appContext).beginUniqueWork(
+                "dailyPromptWork",
+                ExistingWorkPolicy.REPLACE,
+                work2
+            ).enqueue()
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -54,12 +62,14 @@ class DailyPromptWorker (private val appContext: Context, params: WorkerParamete
                 val startHour = 9
                 val endHour = 17
                 val randomHour = (startHour until endHour).random()
-                val randomMinute = (0 until 59).random()
-
+                val lockHour = randomHour + 1
+                //val randomMinute = (0 until 59).random()
+                val randomMinute = 1
 
                 // Trigger the prompt whenever this time is reached
                 val calendar =  Calendar.getInstance().apply {
                     set(Calendar.HOUR_OF_DAY, randomHour)
+                    //set(Calendar.HOUR_OF_DAY, 21)
                     set(Calendar.MINUTE, 0)
                     set(Calendar.SECOND, 0)
                 }
@@ -75,12 +85,30 @@ class DailyPromptWorker (private val appContext: Context, params: WorkerParamete
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .build()
 
-            WorkManager.getInstance(context).enqueueUniqueWork(
+            WorkManager.getInstance(context).beginUniqueWork(
                 "dailyPromptWork",
                 ExistingWorkPolicy.REPLACE,
                 work
-            )
+            ).enqueue()
+
+
         }
     }
 
+}
+
+class workLock (private val appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params) {
+    override suspend fun doWork(): Result = withContext(Dispatchers.Default) {
+        try {
+            val drawData = booleanPreferencesKey("drawData")
+            appContext.dataStore.edit { settings ->
+                settings[drawData] = false
+            }
+            //scheduleNextPrompt(appContext)
+            Result.success()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure()
+        }
+    }
 }
