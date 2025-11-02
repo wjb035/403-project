@@ -176,22 +176,23 @@ fun whiteboard(navCon: NavController){
 
                 ) {Button(onClick = {
                     coroutineScope.launch {
-                        uriDay = saveDrawing(context, lines, true)
+                        uriDay = saveDrawing(context, lines, false, prompt)
+
+
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            //putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                            putExtra(Intent.EXTRA_STREAM, uriDay)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            type = "image/png"
+                            //type = "text/plain"
+                        }
+
+
+                        context.startActivity(sendIntent)
                     }
-                    // KNOWN ISSUE, IMAGE DOESN'T WORK THE FIRST TIME AROUND
 
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        //putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
-                        putExtra(Intent.EXTRA_STREAM, uriDay)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        type = "image/png"
-                        //type = "text/plain"
-                    }
-
-
-                    context.startActivity(sendIntent)
                 }) {
                     Text("Share")
                 }
@@ -360,7 +361,7 @@ fun whiteboard(navCon: NavController){
                 }
                 Button(onClick = {
                     coroutineScope.launch {
-                        saveDrawing(context, lines, true)
+                        saveDrawing(context, lines, true, prompt)
                     }
                 }) {
                     Text("Save")
@@ -493,7 +494,7 @@ data class Line(val start: Offset, val end: Offset, val color: Color, val stroke
 
 // All this fun stuff is for saving the drawing as an image. The code from this came from this video:
 // https://youtu.be/nMeO3XxjfBs?si=8Pkxk9B5QIwBqa8d
-suspend fun saveDrawing(context: Context, lines: List<Line>,downloadToDevice: Boolean): Uri? {
+suspend fun saveDrawing(context: Context, lines: List<Line>,downloadToDevice: Boolean, prompt: String): Uri? {
     val bitmap = Bitmap.createBitmap(1000,1000,Bitmap.Config.ARGB_8888)
     bitmap.applyCanvas {
         drawColor(android.graphics.Color.WHITE)
@@ -510,21 +511,25 @@ suspend fun saveDrawing(context: Context, lines: List<Line>,downloadToDevice: Bo
         }
     }
     val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, "drawing_${System.currentTimeMillis()}")
+        put(MediaStore.MediaColumns.DISPLAY_NAME, "quickdraw-${prompt}")
         put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-        put(MediaStore.MediaColumns.RELATIVE_PATH,"Pictures/WhiteboardSim")
+        if (downloadToDevice) {
+            put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/WhiteboardSim")
+        }
     }
 
     val resolver = context.contentResolver
     val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
-    if (uri != null && downloadToDevice){
+    if (uri != null){
         val outputStream: OutputStream? = resolver.openOutputStream(uri)
         outputStream.use {
             if (it != null){
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
             }
-            Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+            if (downloadToDevice) {
+                Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
