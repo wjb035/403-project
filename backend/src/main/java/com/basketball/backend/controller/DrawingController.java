@@ -1,7 +1,10 @@
 package com.basketball.backend.controller;
 
 import com.basketball.backend.model.Drawing;
+import com.basketball.backend.model.DrawingLike;
+import com.basketball.backend.model.User;
 import com.basketball.backend.repository.DrawingRepository;
+import com.basketball.backend.repository.DrawingLikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -26,7 +29,7 @@ public class DrawingController {
 
     @GetMapping("/leaderboard/new")
     public List<Drawing> getLeaderboardByTimestamp() {
-        return drawingRepository.findAllByOrderByCreatedAtDesc();;
+        return drawingRepository.findAllByOrderByCreatedAtDesc();
     }
 
 
@@ -39,7 +42,7 @@ public class DrawingController {
     }
 
     @PostMapping("/like/{drawingId}/{userId}")
-    public Drawing likeDrawing(@PathVariable Long drawingId) {
+    public Drawing likeDrawing(@PathVariable Long drawingId, @PathVariable Long userId) {
         Drawing drawing = drawingRepository.findById(drawingId).orElse(null);
         if (drawing == null) {
             throw new RuntimeException("Drawing not found");
@@ -62,7 +65,7 @@ public class DrawingController {
     }
 
     @PostMapping("/unlike/{drawingId}/{userId}")
-    public Drawing unlikeDrawing(@PathVariable Long drawingId) {
+    public Drawing unlikeDrawing(@PathVariable Long drawingId, @PathVariable Long userId) {
         Drawing drawing = drawingRepository.findById(drawingId).orElse(null);
         if (drawing == null) {
             throw new RuntimeException("Drawing not found");
