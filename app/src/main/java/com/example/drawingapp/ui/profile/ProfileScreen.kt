@@ -95,26 +95,13 @@ fun TopBar(
     name: String,
     modifier: Modifier = Modifier
 ) {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "profile") {
-        composable(route = "profile") { ProfileScreen(navCon = navController) }
-        composable(route = "settings") { SettingsScreen(navCon = navController) }
-        composable(route = "search") { SearchScreen(navCon = navController) }
-    }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
             .fillMaxWidth()
     ) {
-        IconButton(
-            onClick = { navController.navigate("search") },
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.search_icon),
-                contentDescription = "Search Icon"
-            )
-        }
+
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = name,
@@ -123,14 +110,7 @@ fun TopBar(
             fontSize = 20.sp
         )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = { navController.navigate("settings") },
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.setting_icon),
-                contentDescription = "Setting Icon"
-            )
-        }
+
     }
 }
 

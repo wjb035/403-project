@@ -36,11 +36,11 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = currentBackStackEntry?.destination?.route
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("home", "gallery", "profile", "whiteboard", "prompt")){
+                        if (currentRoute in listOf("home", "search", "gallery", "profile", "settings", "whiteboard", "prompt")){
                             NavigationBar(
                                 containerColor = MaterialTheme.colorScheme.primary
                             ) {
-                                val items = listOf("Home", "Gallery", "Profile")
+                                val items = listOf("Home", "Search", "Gallery", "Profile", "Settings")
                                 items.forEach { route ->
                                     NavigationBarItem(
                                         icon = {},
@@ -92,10 +92,10 @@ class MainActivity : ComponentActivity() {
                         composable(route = "register"){
                             RegisterScreen(navCon=navController)
                         }
-                        composable(route = "settings") {
+                        composable(route = "search") {
                             SearchScreen(navCon=navController)
                         }
-                        composable(route = "search") {
+                        composable(route = "settings") {
                             SettingsScreen(navCon=navController)
                         }
 
