@@ -106,7 +106,7 @@ fun NotificationSwitch(name: String) {
         Spacer(Modifier.width(40.dp))
         Switch(
             checked = isChecked,
-            onCheckedChange = {  }
+            onCheckedChange = { isChecked = !isChecked }
         )
     }
 }

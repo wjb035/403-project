@@ -1,6 +1,8 @@
 package com.example.drawingapp.ui.profile
 
+import android.Manifest
 import android.annotation.SuppressLint
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,8 +27,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,13 +52,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
+import com.example.drawingapp.ui.settings.SettingsScreen
+import com.example.drawingapp.MainActivity
+import androidx.navigation.compose.composable
+import com.example.drawingapp.ui.search.SearchScreen
 
+@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 @Composable
 fun ProfileScreen(navCon: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
-            name = "Name",
+            name = "Example Name",
             modifier = Modifier
                 .padding(10.dp)
         )
@@ -78,6 +89,7 @@ fun ProfileScreen(navCon: NavController) {
     }
 }
 
+@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 @Composable
 fun TopBar(
     name: String,
@@ -89,12 +101,7 @@ fun TopBar(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.back_arrow),
-            contentDescription = "Back",
-            tint = Color.Black,
-            modifier = Modifier.size(24.dp)
-        )
+
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = name,
@@ -103,6 +110,7 @@ fun TopBar(
             fontSize = 20.sp
         )
         Spacer(modifier = Modifier.weight(1f))
+
     }
 }
 
@@ -312,7 +320,8 @@ fun PhotoClick(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .wrapContentSize(unbounded = true)
     ) {
         Box(modifier = Modifier

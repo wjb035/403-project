@@ -9,9 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(navCon: NavController) {
     var searchQuery by remember { mutableStateOf("") }
 
     // Sample data

@@ -17,11 +17,16 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
+import androidx.navigation.NavController
 import com.example.drawingapp.loginscreen.LoginScreen
 import com.example.drawingapp.loginscreen.RegisterScreen
+import com.example.drawingapp.ui.search.SearchScreen
+import com.example.drawingapp.ui.settings.SettingsScreen
+
 
 
 class MainActivity : ComponentActivity() {
+    @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -31,11 +36,11 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = currentBackStackEntry?.destination?.route
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("home", "gallery", "profile", "whiteboard", "prompt")){
+                        if (currentRoute in listOf("home", "search", "gallery", "profile", "settings", "whiteboard", "prompt")){
                             NavigationBar(
                                 containerColor = MaterialTheme.colorScheme.primary
                             ) {
-                                val items = listOf("Home", "Gallery", "Profile")
+                                val items = listOf("Home", "Search", "Gallery", "Profile", "Settings")
                                 items.forEach { route ->
                                     NavigationBarItem(
                                         icon = {},
@@ -86,6 +91,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "register"){
                             RegisterScreen(navCon=navController)
+                        }
+                        composable(route = "search") {
+                            SearchScreen(navCon=navController)
+                        }
+                        composable(route = "settings") {
+                            SettingsScreen(navCon=navController)
                         }
 
                     }
