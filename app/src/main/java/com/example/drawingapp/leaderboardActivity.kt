@@ -4,8 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import com.example.drawingapp.R
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,69 +42,79 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlin.collections.map
 import kotlin.collections.plus
 
 @Composable
 fun leaderboard(navCon: NavController) {
-    Box(modifier=Modifier.fillMaxSize()){
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .offset(x = 25.dp, y = 50.dp)){
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.white_layer),
+            contentDescription = "background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        var showDialog by remember { mutableStateOf(false) }
+        var postID by remember { mutableStateOf("NULL") }
+
+        if (showDialog) {
+            AlertDialog(onDismiss = { showDialog = false }, postID)
+        }
+
+        Column(modifier = Modifier.fillMaxSize()) {
             Row(
-                Modifier.fillMaxWidth()
-                    .padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 50.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(text="Gallery Work in Progress",
-                    modifier=Modifier,
-                    fontSize = 30.sp)
-
+            ) {
+                IconButton(onClick = { navCon.navigate("home") }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.back_arrow),
+                        contentDescription = "Back to Home",
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
+                Text(
+                    text = "Gallery",
+                    modifier = Modifier,                    fontSize = 30.sp
+                )
+                Spacer(modifier = Modifier.size(48.dp)) // Balances the back button
             }
-        }
-    }
-    // showDialog lets us know when to do the pop-up
-    // postID is a temporary identification number associated with each post
-    var showDialog by remember {mutableStateOf(false)}
-    var postID by remember {mutableStateOf("NULL")}
 
-    // When the user clicks the post button, the alertdialog function is triggered
-    if  (showDialog){
-        AlertDialog(onDismiss = {showDialog = false}, postID)
-    }
+            val list = listOf(
+                "A", "B", "C", "D"
+            ) + ((0..100).map { it.toString() })
 
-
-    val list = listOf(
-        "A", "B", "C", "D"
-    ) + ((0..100).map { it.toString() })
-    LazyColumn(modifier = Modifier
-        .offset(0.dp, 100.dp)
-    ) {
-        items(items = list, itemContent = { item ->
-            //LazyColumn displays one hundred IconButtons- the images for which are all currently sample images (not real data)
-            when (item) {
-                else -> {
-                    //When the IconButton is pressed, stores the item id in the postID variable, and showDialog is marked as true.
-                    IconButton(onClick = {showDialog = true
-                                         postID = item},
+            LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
+                items(items = list, itemContent = { item ->
+                    IconButton(
+                        onClick = {
+                            showDialog = true
+                            postID = item
+                        },
                         modifier = Modifier
-                            .width(400.dp).height(300.dp)
+                            .width(400.dp)
+                            .height(300.dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.image),
                             contentDescription = "Image",
                             modifier = Modifier.fillMaxSize()
                         )
-
-                    }}
+                    }
+                })
             }
-        })
+        }
     }
 }
 
@@ -135,7 +143,7 @@ fun AlertDialog(onDismiss: ()-> Unit, postID: String){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ){
-                Text(text="POST ID: " + postID, fontSize = 25.sp, color = Color.Black)
+                Text(text="POST ID: " + postID, fontSize = 25.sp, color = MaterialTheme.colorScheme.onSurface)
 
                 IconButton(onClick = {},
                     modifier = Modifier
@@ -158,5 +166,11 @@ fun AlertDialog(onDismiss: ()-> Unit, postID: String){
 
     )
 
+}
+
+@Preview
+@Composable
+fun leaderboardPreview(){
+    leaderboard(navCon = rememberNavController())
 }
 

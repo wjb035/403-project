@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 // Wrapper for wordfetch
 @Service
-class BackendWordFetcher {
+public class BackendWordFetcher {
 
     private val wordFetch = WordFetch()
 

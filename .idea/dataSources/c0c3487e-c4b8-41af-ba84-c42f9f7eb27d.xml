@@ -1034,7 +1034,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="288" parent="1" name="drawingapp">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-11-03.02:38:38</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-11-03.05:06:14</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1096,262 +1096,380 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="303" parent="288" name="user_settings">
+    <table id="303" parent="288" name="prompts">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="304" parent="288" name="users">
+    <table id="304" parent="288" name="user">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <column id="305" parent="299" name="id">
+    <table id="305" parent="288" name="user_followers">
+      <DetailsLevel>3</DetailsLevel>
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="306" parent="288" name="user_settings">
+      <DetailsLevel>3</DetailsLevel>
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="307" parent="288" name="users">
+      <DetailsLevel>3</DetailsLevel>
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <column id="308" parent="299" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="306" parent="299" name="prompt_text">
+    <column id="309" parent="299" name="prompt_text">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="307" parent="299" name="date">
+    <column id="310" parent="299" name="date">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="308" parent="299" name="posted_at">
+    <column id="311" parent="299" name="posted_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>4</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <index id="309" parent="299" name="PRIMARY">
+    <index id="312" parent="299" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="310" parent="299" name="date">
+    <index id="313" parent="299" name="date">
       <ColNames>date</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="311" parent="299" name="PRIMARY">
+    <key id="314" parent="299" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="312" parent="299" name="date">
+    <key id="315" parent="299" name="date">
       <UnderlyingIndexName>date</UnderlyingIndexName>
     </key>
-    <column id="313" parent="300" name="user_id">
+    <column id="316" parent="300" name="user_id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="314" parent="300" name="drawing_id">
+    <column id="317" parent="300" name="drawing_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="315" parent="300" name="drawing_likes_ibfk_1">
+    <foreign-key id="318" parent="300" name="drawing_likes_ibfk_1">
       <ColNames>user_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="316" parent="300" name="drawing_likes_ibfk_2">
+    <foreign-key id="319" parent="300" name="drawing_likes_ibfk_2">
       <ColNames>drawing_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>drawings</RefTableName>
     </foreign-key>
-    <index id="317" parent="300" name="PRIMARY">
+    <index id="320" parent="300" name="PRIMARY">
       <ColNames>user_id
 drawing_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="318" parent="300" name="drawing_id">
+    <index id="321" parent="300" name="drawing_id">
       <ColNames>drawing_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="319" parent="300" name="PRIMARY">
+    <key id="322" parent="300" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="320" parent="301" name="id">
+    <column id="323" parent="301" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="321" parent="301" name="user_id">
+    <column id="324" parent="301" name="user_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="322" parent="301" name="image_url">
+    <column id="325" parent="301" name="image_url">
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="323" parent="301" name="description">
+    <column id="326" parent="301" name="description">
       <Position>4</Position>
-      <StoredType>text|0s</StoredType>
+      <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="324" parent="301" name="likes_count">
+    <column id="327" parent="301" name="likes_count">
       <DefaultExpression>0</DefaultExpression>
       <Position>5</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="325" parent="301" name="created_at">
+    <column id="328" parent="301" name="created_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>6</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <foreign-key id="326" parent="301" name="drawings_ibfk_1">
+    <foreign-key id="329" parent="301" name="FKmj7kyv2o016j8usgcha41odx3">
+      <ColNames>user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>user</RefTableName>
+    </foreign-key>
+    <foreign-key id="330" parent="301" name="drawings_ibfk_1">
       <ColNames>user_id</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <index id="327" parent="301" name="PRIMARY">
+    <index id="331" parent="301" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="328" parent="301" name="user_id">
+    <index id="332" parent="301" name="FKmj7kyv2o016j8usgcha41odx3">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="329" parent="301" name="PRIMARY">
+    <key id="333" parent="301" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="330" parent="302" name="follower_id">
+    <column id="334" parent="302" name="follower_id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="331" parent="302" name="following_id">
+    <column id="335" parent="302" name="following_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="332" parent="302" name="followers_ibfk_1">
+    <foreign-key id="336" parent="302" name="followers_ibfk_1">
       <ColNames>follower_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="333" parent="302" name="followers_ibfk_2">
+    <foreign-key id="337" parent="302" name="followers_ibfk_2">
       <ColNames>following_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <index id="334" parent="302" name="PRIMARY">
+    <index id="338" parent="302" name="PRIMARY">
       <ColNames>follower_id
 following_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="335" parent="302" name="following_id">
+    <index id="339" parent="302" name="following_id">
       <ColNames>following_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="336" parent="302" name="PRIMARY">
+    <key id="340" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="337" parent="303" name="id">
-      <AutoIncrement>1</AutoIncrement>
+    <column id="341" parent="303" name="id">
+      <AutoIncrement>38</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="338" parent="303" name="user_id">
-      <NotNull>1</NotNull>
+    <column id="342" parent="303" name="date_generated">
       <Position>2</Position>
-      <StoredType>bigint|0s</StoredType>
+      <StoredType>datetime(6)|0s</StoredType>
     </column>
-    <column id="339" parent="303" name="theme">
-      <DefaultExpression>&apos;light&apos;</DefaultExpression>
+    <column id="343" parent="303" name="text">
       <Position>3</Position>
-      <StoredType>varchar(20)|0s</StoredType>
+      <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="340" parent="303" name="notifications_enabled">
-      <DefaultExpression>1</DefaultExpression>
-      <Position>4</Position>
-      <StoredType>tinyint(1)|0s</StoredType>
-    </column>
-    <foreign-key id="341" parent="303" name="user_settings_ibfk_1">
-      <ColNames>user_id</ColNames>
-      <RefColNames>id</RefColNames>
-      <RefTableName>users</RefTableName>
-    </foreign-key>
-    <index id="342" parent="303" name="PRIMARY">
+    <index id="344" parent="303" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="343" parent="303" name="user_id">
-      <ColNames>user_id</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="344" parent="303" name="PRIMARY">
+    <key id="345" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="345" parent="304" name="id">
+    <column id="346" parent="304" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="346" parent="304" name="username">
-      <NotNull>1</NotNull>
+    <column id="347" parent="304" name="bio">
       <Position>2</Position>
-      <StoredType>varchar(50)|0s</StoredType>
+      <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="347" parent="304" name="password">
-      <NotNull>1</NotNull>
+    <column id="348" parent="304" name="created_at">
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="348" parent="304" name="bio">
+    <column id="349" parent="304" name="password">
+      <NotNull>1</NotNull>
       <Position>4</Position>
-      <StoredType>text|0s</StoredType>
+      <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="349" parent="304" name="profile_picture">
+    <column id="350" parent="304" name="profile_picture">
       <Position>5</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="350" parent="304" name="created_at">
-      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+    <column id="351" parent="304" name="username">
+      <NotNull>1</NotNull>
       <Position>6</Position>
-      <StoredType>timestamp|0s</StoredType>
+      <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <index id="351" parent="304" name="PRIMARY">
+    <index id="352" parent="304" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="352" parent="304" name="username">
+    <index id="353" parent="304" name="UKsb8bbouer5wak8vyiiy4pf2bx">
       <ColNames>username</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="353" parent="304" name="PRIMARY">
+    <key id="354" parent="304" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="354" parent="304" name="username">
+    <key id="355" parent="304" name="UKsb8bbouer5wak8vyiiy4pf2bx">
+      <UnderlyingIndexName>UKsb8bbouer5wak8vyiiy4pf2bx</UnderlyingIndexName>
+    </key>
+    <column id="356" parent="305" name="user_id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <column id="357" parent="305" name="follower_id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <foreign-key id="358" parent="305" name="FKokc5w6fibhnthvwnxjxyrlfc1">
+      <ColNames>user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>user</RefTableName>
+    </foreign-key>
+    <foreign-key id="359" parent="305" name="FK70tvmgyh1ha7f6unsw8s6jej8">
+      <ColNames>follower_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>user</RefTableName>
+    </foreign-key>
+    <index id="360" parent="305" name="FKokc5w6fibhnthvwnxjxyrlfc1">
+      <ColNames>user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="361" parent="305" name="FK70tvmgyh1ha7f6unsw8s6jej8">
+      <ColNames>follower_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <column id="362" parent="306" name="id">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <column id="363" parent="306" name="user_id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <column id="364" parent="306" name="theme">
+      <DefaultExpression>&apos;light&apos;</DefaultExpression>
+      <Position>3</Position>
+      <StoredType>varchar(20)|0s</StoredType>
+    </column>
+    <column id="365" parent="306" name="notifications_enabled">
+      <DefaultExpression>1</DefaultExpression>
+      <Position>4</Position>
+      <StoredType>tinyint(1)|0s</StoredType>
+    </column>
+    <foreign-key id="366" parent="306" name="user_settings_ibfk_1">
+      <ColNames>user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <index id="367" parent="306" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="368" parent="306" name="user_id">
+      <ColNames>user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="369" parent="306" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="370" parent="307" name="id">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <column id="371" parent="307" name="username">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="372" parent="307" name="password">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="373" parent="307" name="bio">
+      <Position>4</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="374" parent="307" name="profile_picture">
+      <Position>5</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="375" parent="307" name="created_at">
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <Position>6</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <index id="376" parent="307" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="377" parent="307" name="username">
+      <ColNames>username</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="378" parent="307" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <key id="379" parent="307" name="username">
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
   </database-model>

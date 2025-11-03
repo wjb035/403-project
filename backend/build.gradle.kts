@@ -1,9 +1,9 @@
 plugins {
 	java
-	id("org.springframework.boot") version "3.5.6"
+	id("org.springframework.boot") version "3.5.7"
 	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("jvm") version "1.9.0"
-    kotlin("plugin.spring") version "1.9.0"
+	kotlin("jvm") version "1.9.10"
+    kotlin("plugin.spring") version "1.9.10"
 }
 
 group = "com.basketball"
@@ -20,16 +20,6 @@ kotlin {
     jvmToolchain(17) 
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("src/main/java", "src/main/kotlin"))
-        }
-		resources {
-            srcDir("src/main/resources")
-        }
-    }
-}
 
 repositories {
 	mavenCentral()   
@@ -54,4 +44,12 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.named("compileJava") {
+    dependsOn("compileKotlin")
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

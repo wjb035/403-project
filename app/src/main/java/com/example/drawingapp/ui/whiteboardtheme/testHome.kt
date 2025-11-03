@@ -18,7 +18,7 @@ import androidx.navigation.NavController
 
 
 @Composable
-fun home(navCon: NavController){
+fun testHome(navCon: NavController){
     // Beneath all the flavor text (modifier things), it's just a simple white screen
     // with a button to go to the whiteboard. The idea is that this will be updated with more and more-
     // this is just so we can navigate for now.
