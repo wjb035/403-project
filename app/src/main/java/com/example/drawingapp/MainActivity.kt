@@ -8,7 +8,9 @@ import com.example.drawingapp.prompter.PromptScreen
 import com.example.drawingapp.ui.home.HomeScreen
 import com.example.drawingapp.ui.profile.ProfileScreen
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.drawingapp.loginscreen.LoginScreen
 import com.example.drawingapp.loginscreen.RegisterScreen
@@ -35,8 +38,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route
-
-                // function to retrieve the icon based on the route
                 fun getIconForItem(item: String): Int {
                     return when (item) {
                         "Home" -> R.drawable.home // Replace with your actual drawable resource
@@ -58,9 +59,10 @@ class MainActivity : ComponentActivity() {
                                 items.forEach { route ->
                                     NavigationBarItem(
                                         
-                                        icon = {Icon(
+                                        icon = {Image(
                                             painter = painterResource(id = getIconForItem(route)),
-                                            contentDescription = route
+                                            contentDescription = route,
+                                            modifier = Modifier.size(24.dp)
                                             )
 
                                         },
@@ -85,7 +87,7 @@ class MainActivity : ComponentActivity() {
                 ) {innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "login",
+                        startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
                     ){
                         composable(route = "splash") {
