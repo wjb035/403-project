@@ -30,5 +30,11 @@
         </introspection-scope>
       </schema-mapping>
     </data-source>
+    <data-source name="DRAWING APP" uuid="c0c3487e-c4b8-41af-ba84-c42f9f7eb27d">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>quickdrawserver</user-name>
+      <schema-mapping />
+    </data-source>
   </component>
 </project>

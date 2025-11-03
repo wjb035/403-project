@@ -1,100 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="@localhost [3]">
+<dataSource name="DRAWING APP">
   <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.53">
     <root id="1">
-      <DefaultAuthPlugin>caching_sha2_password</DefaultAuthPlugin>
-      <DefaultCasing>lower/lower</DefaultCasing>
+      <DefaultAuthPlugin>mysql_native_password</DefaultAuthPlugin>
+      <DefaultCasing>exact</DefaultCasing>
       <DefaultEngine>InnoDB</DefaultEngine>
       <DefaultTmpEngine>InnoDB</DefaultTmpEngine>
-      <Grants>|root||quickdrawserver|localhost|ALTER|G
-|root||quickdrawserver|localhost|ALTER ROUTINE|G
-|root||quickdrawserver|localhost|APPLICATION_PASSWORD_ADMIN|G
+      <Grants>|root||rds_superuser_role||ALTER|G
+|root||rdsadmin|localhost|ALTER|G
+|root||rds_superuser_role||ALTER ROUTINE|G
+|root||rdsadmin|localhost|ALTER ROUTINE|G
+|root||rds_superuser_role||APPLICATION_PASSWORD_ADMIN|G
+|root||rdsadmin|localhost|APPLICATION_PASSWORD_ADMIN|G
 |root||mysql.infoschema|localhost|AUDIT_ABORT_EXEMPT|G
 |root||mysql.session|localhost|AUDIT_ABORT_EXEMPT|G
 |root||mysql.sys|localhost|AUDIT_ABORT_EXEMPT|G
-|root||quickdrawserver|localhost|AUDIT_ABORT_EXEMPT|G
-|root||quickdrawserver|localhost|AUDIT_ADMIN|G
+|root||rdsadmin|localhost|AUDIT_ABORT_EXEMPT|G
+|root||rdsadmin|localhost|AUDIT_ADMIN|G
 |root||mysql.session|localhost|AUTHENTICATION_POLICY_ADMIN|G
-|root||quickdrawserver|localhost|AUTHENTICATION_POLICY_ADMIN|G
+|root||rdsadmin|localhost|AUTHENTICATION_POLICY_ADMIN|G
 |root||mysql.session|localhost|BACKUP_ADMIN|G
-|root||quickdrawserver|localhost|BACKUP_ADMIN|G
-|root||quickdrawserver|localhost|BINLOG_ADMIN|G
-|root||quickdrawserver|localhost|BINLOG_ENCRYPTION_ADMIN|G
+|root||rdsadmin|localhost|BACKUP_ADMIN|G
+|root||rdsadmin|localhost|BINLOG_ADMIN|G
+|root||rdsadmin|localhost|BINLOG_ENCRYPTION_ADMIN|G
 |root||mysql.session|localhost|CLONE_ADMIN|G
-|root||quickdrawserver|localhost|CLONE_ADMIN|G
+|root||rdsadmin|localhost|CLONE_ADMIN|G
 |root||mysql.session|localhost|CONNECTION_ADMIN|G
-|root||quickdrawserver|localhost|CONNECTION_ADMIN|G
-|root||quickdrawserver|localhost|CREATE|G
-|root||quickdrawserver|localhost|CREATE ROLE|G
-|root||quickdrawserver|localhost|CREATE ROUTINE|G
-|root||quickdrawserver|localhost|CREATE TABLESPACE|G
-|root||quickdrawserver|localhost|CREATE TEMPORARY TABLES|G
-|root||quickdrawserver|localhost|CREATE USER|G
-|root||quickdrawserver|localhost|CREATE VIEW|G
-|root||quickdrawserver|localhost|DELETE|G
-|root||quickdrawserver|localhost|DROP|G
-|root||quickdrawserver|localhost|DROP ROLE|G
-|root||quickdrawserver|localhost|ENCRYPTION_KEY_ADMIN|G
-|root||quickdrawserver|localhost|EVENT|G
-|root||quickdrawserver|localhost|EXECUTE|G
-|root||quickdrawserver|localhost|FILE|G
+|root||rdsadmin|localhost|CONNECTION_ADMIN|G
+|root||rds_superuser_role||CREATE|G
+|root||rdsadmin|localhost|CREATE|G
+|root||rds_superuser_role||CREATE ROLE|G
+|root||rdsadmin|localhost|CREATE ROLE|G
+|root||rds_superuser_role||CREATE ROUTINE|G
+|root||rdsadmin|localhost|CREATE ROUTINE|G
+|root||rdsadmin|localhost|CREATE TABLESPACE|G
+|root||rds_superuser_role||CREATE TEMPORARY TABLES|G
+|root||rdsadmin|localhost|CREATE TEMPORARY TABLES|G
+|root||rds_superuser_role||CREATE USER|G
+|root||rdsadmin|localhost|CREATE USER|G
+|root||rds_superuser_role||CREATE VIEW|G
+|root||rdsadmin|localhost|CREATE VIEW|G
+|root||rds_superuser_role||DELETE|G
+|root||rdsadmin|localhost|DELETE|G
+|root||rds_superuser_role||DROP|G
+|root||rdsadmin|localhost|DROP|G
+|root||rds_superuser_role||DROP ROLE|G
+|root||rdsadmin|localhost|DROP ROLE|G
+|root||rdsadmin|localhost|ENCRYPTION_KEY_ADMIN|G
+|root||rds_superuser_role||EVENT|G
+|root||rdsadmin|localhost|EVENT|G
+|root||rds_superuser_role||EXECUTE|G
+|root||rdsadmin|localhost|EXECUTE|G
+|root||rdsadmin|localhost|FILE|G
 |root||mysql.infoschema|localhost|FIREWALL_EXEMPT|G
 |root||mysql.session|localhost|FIREWALL_EXEMPT|G
 |root||mysql.sys|localhost|FIREWALL_EXEMPT|G
-|root||quickdrawserver|localhost|FIREWALL_EXEMPT|G
-|root||quickdrawserver|localhost|FLUSH_OPTIMIZER_COSTS|G
-|root||quickdrawserver|localhost|FLUSH_STATUS|G
-|root||quickdrawserver|localhost|FLUSH_TABLES|G
-|root||quickdrawserver|localhost|FLUSH_USER_RESOURCES|G
-|root||quickdrawserver|localhost|GROUP_REPLICATION_ADMIN|G
-|root||quickdrawserver|localhost|GROUP_REPLICATION_STREAM|G
-|root||quickdrawserver|localhost|INDEX|G
-|root||quickdrawserver|localhost|INNODB_REDO_LOG_ARCHIVE|G
-|root||quickdrawserver|localhost|INNODB_REDO_LOG_ENABLE|G
-|root||quickdrawserver|localhost|INSERT|G
-|root||quickdrawserver|localhost|LOCK TABLES|G
-|root||quickdrawserver|localhost|PASSWORDLESS_USER_ADMIN|G
+|root||rdsadmin|localhost|FIREWALL_EXEMPT|G
+|root||rds_superuser_role||FLUSH_OPTIMIZER_COSTS|G
+|root||rdsadmin|localhost|FLUSH_OPTIMIZER_COSTS|G
+|root||rds_superuser_role||FLUSH_STATUS|G
+|root||rdsadmin|localhost|FLUSH_STATUS|G
+|root||rds_superuser_role||FLUSH_TABLES|G
+|root||rdsadmin|localhost|FLUSH_TABLES|G
+|root||rds_superuser_role||FLUSH_USER_RESOURCES|G
+|root||rdsadmin|localhost|FLUSH_USER_RESOURCES|G
+|root||rdsadmin|localhost|GROUP_REPLICATION_ADMIN|G
+|root||rdsadmin|localhost|GROUP_REPLICATION_STREAM|G
+|root||rds_superuser_role||INDEX|G
+|root||rdsadmin|localhost|INDEX|G
+|root||rdsadmin|localhost|INNODB_REDO_LOG_ARCHIVE|G
+|root||rdsadmin|localhost|INNODB_REDO_LOG_ENABLE|G
+|root||rds_superuser_role||INSERT|G
+|root||rdsadmin|localhost|INSERT|G
+|root||rds_superuser_role||LOCK TABLES|G
+|root||rdsadmin|localhost|LOCK TABLES|G
+|root||rdsadmin|localhost|PASSWORDLESS_USER_ADMIN|G
 |root||mysql.session|localhost|PERSIST_RO_VARIABLES_ADMIN|G
-|root||quickdrawserver|localhost|PERSIST_RO_VARIABLES_ADMIN|G
-|root||quickdrawserver|localhost|PROCESS|G
-|root||quickdrawserver|localhost|REFERENCES|G
-|root||quickdrawserver|localhost|RELOAD|G
-|root||quickdrawserver|localhost|REPLICATION CLIENT|G
-|root||quickdrawserver|localhost|REPLICATION SLAVE|G
-|root||quickdrawserver|localhost|REPLICATION_APPLIER|G
-|root||quickdrawserver|localhost|REPLICATION_SLAVE_ADMIN|G
-|root||quickdrawserver|localhost|RESOURCE_GROUP_ADMIN|G
-|root||quickdrawserver|localhost|RESOURCE_GROUP_USER|G
-|root||quickdrawserver|localhost|ROLE_ADMIN|G
+|root||rdsadmin|localhost|PERSIST_RO_VARIABLES_ADMIN|G
+|root||rds_superuser_role||PROCESS|G
+|root||rdsadmin|localhost|PROCESS|G
+|root||rds_superuser_role||REFERENCES|G
+|root||rdsadmin|localhost|REFERENCES|G
+|root||rds_superuser_role||RELOAD|G
+|root||rdsadmin|localhost|RELOAD|G
+|root||rds_superuser_role||REPLICATION CLIENT|G
+|root||rdsadmin|localhost|REPLICATION CLIENT|G
+|root||rds_superuser_role||REPLICATION SLAVE|G
+|root||rdsadmin|localhost|REPLICATION SLAVE|G
+|root||rdsadmin|localhost|REPLICATION_APPLIER|G
+|root||rdsadmin|localhost|REPLICATION_SLAVE_ADMIN|G
+|root||rdsadmin|localhost|RESOURCE_GROUP_ADMIN|G
+|root||rdsadmin|localhost|RESOURCE_GROUP_USER|G
+|root||rds_superuser_role||ROLE_ADMIN|G
+|root||rdsadmin|localhost|ROLE_ADMIN|G
 |root||mysql.infoschema|localhost|SELECT|G
-|root||quickdrawserver|localhost|SELECT|G
-|root||quickdrawserver|localhost|SENSITIVE_VARIABLES_OBSERVER|G
-|root||quickdrawserver|localhost|SERVICE_CONNECTION_ADMIN|G
+|root||rds_superuser_role||SELECT|G
+|root||rdsadmin|localhost|SELECT|G
+|root||rds_superuser_role||SENSITIVE_VARIABLES_OBSERVER|G
+|root||rdsadmin|localhost|SENSITIVE_VARIABLES_OBSERVER|G
+|root||rdsadmin|localhost|SERVICE_CONNECTION_ADMIN|G
 |root||mysql.session|localhost|SESSION_VARIABLES_ADMIN|G
-|root||quickdrawserver|localhost|SESSION_VARIABLES_ADMIN|G
-|root||quickdrawserver|localhost|SET_USER_ID|G
-|root||quickdrawserver|localhost|SHOW DATABASES|G
-|root||quickdrawserver|localhost|SHOW VIEW|G
-|root||quickdrawserver|localhost|SHOW_ROUTINE|G
-|root||mysql.session|localhost|SHUTDOWN|G
-|root||quickdrawserver|localhost|SHUTDOWN|G
-|root||mysql.session|localhost|SUPER|G
-|root||quickdrawserver|localhost|SUPER|G
+|root||rds_superuser_role||SESSION_VARIABLES_ADMIN|G
+|root||rdsadmin|localhost|SESSION_VARIABLES_ADMIN|G
+|root||rds_superuser_role||SET_USER_ID|G
+|root||rdsadmin|localhost|SET_USER_ID|G
+|root||rds_superuser_role||SHOW DATABASES|G
+|root||rdsadmin|localhost|SHOW DATABASES|G
+|root||rds_superuser_role||SHOW VIEW|G
+|root||rdsadmin|localhost|SHOW VIEW|G
+|root||rds_superuser_role||SHOW_ROUTINE|G
+|root||rdsadmin|localhost|SHOW_ROUTINE|G
+|root||rdsadmin|localhost|SHUTDOWN|G
+|root||rdsadmin|localhost|SUPER|G
 |root||mysql.infoschema|localhost|SYSTEM_USER|G
 |root||mysql.session|localhost|SYSTEM_USER|G
 |root||mysql.sys|localhost|SYSTEM_USER|G
-|root||quickdrawserver|localhost|SYSTEM_USER|G
+|root||rdsadmin|localhost|SYSTEM_USER|G
 |root||mysql.session|localhost|SYSTEM_VARIABLES_ADMIN|G
-|root||quickdrawserver|localhost|SYSTEM_VARIABLES_ADMIN|G
-|root||quickdrawserver|localhost|TABLE_ENCRYPTION_ADMIN|G
-|root||quickdrawserver|localhost|TELEMETRY_LOG_ADMIN|G
-|root||quickdrawserver|localhost|TRIGGER|G
-|root||quickdrawserver|localhost|UPDATE|G
-|root||quickdrawserver|localhost|XA_RECOVER_ADMIN|G
-|root||quickdrawserver|localhost|grant option|G
+|root||rdsadmin|localhost|SYSTEM_VARIABLES_ADMIN|G
+|root||rdsadmin|localhost|TABLE_ENCRYPTION_ADMIN|G
+|root||rdsadmin|localhost|TELEMETRY_LOG_ADMIN|G
+|root||rds_superuser_role||TRIGGER|G
+|root||rdsadmin|localhost|TRIGGER|G
+|root||rds_superuser_role||UPDATE|G
+|root||rdsadmin|localhost|UPDATE|G
+|root||rds_superuser_role||XA_RECOVER_ADMIN|G
+|root||rdsadmin|localhost|XA_RECOVER_ADMIN|G
+|root||rds_superuser_role||grant option|G
+|root||rdsadmin|localhost|grant option|G
 performance_schema|schema||mysql.session|localhost|SELECT|G
 sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
-      <ServerVersion>8.0.43</ServerVersion>
+      <ServerVersion>8.0.42</ServerVersion>
     </root>
     <collation id="2" parent="1" name="armscii8_bin">
       <Charset>armscii8</Charset>
@@ -998,7 +1034,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="288" parent="1" name="drawingapp">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-11-03.02:26:40</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-11-03.02:38:38</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1016,412 +1052,306 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <user id="293" parent="1" name="mysql.infoschema">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
+      <Plugin>caching_sha2_password</Plugin>
     </user>
     <user id="294" parent="1" name="mysql.session">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
+      <Plugin>caching_sha2_password</Plugin>
     </user>
     <user id="295" parent="1" name="mysql.sys">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
+      <Plugin>caching_sha2_password</Plugin>
     </user>
     <user id="296" parent="1" name="quickdrawserver">
-      <Host>localhost</Host>
+      <RoleGrants>rds_superuser_role
+</RoleGrants>
     </user>
-    <table id="297" parent="288" name="daily_prompts">
+    <user id="297" parent="1" name="rds_superuser_role">
+      <CanLogin>0</CanLogin>
+    </user>
+    <user id="298" parent="1" name="rdsadmin">
+      <Host>localhost</Host>
+      <MaxUserConnections>100000</MaxUserConnections>
+      <Plugin>auth_socket</Plugin>
+    </user>
+    <table id="299" parent="288" name="daily_prompts">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="298" parent="288" name="drawing_likes">
+    <table id="300" parent="288" name="drawing_likes">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="299" parent="288" name="drawings">
+    <table id="301" parent="288" name="drawings">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="300" parent="288" name="followers">
+    <table id="302" parent="288" name="followers">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="301" parent="288" name="prompts">
+    <table id="303" parent="288" name="user_settings">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="302" parent="288" name="user">
+    <table id="304" parent="288" name="users">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="303" parent="288" name="user_followers">
-      <DetailsLevel>3</DetailsLevel>
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <table id="304" parent="288" name="user_settings">
-      <DetailsLevel>3</DetailsLevel>
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <table id="305" parent="288" name="users">
-      <DetailsLevel>3</DetailsLevel>
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <column id="306" parent="297" name="id">
+    <column id="305" parent="299" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="307" parent="297" name="prompt_text">
+    <column id="306" parent="299" name="prompt_text">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="308" parent="297" name="date">
+    <column id="307" parent="299" name="date">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="309" parent="297" name="posted_at">
+    <column id="308" parent="299" name="posted_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>4</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <index id="310" parent="297" name="PRIMARY">
+    <index id="309" parent="299" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="311" parent="297" name="date">
+    <index id="310" parent="299" name="date">
       <ColNames>date</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="312" parent="297" name="PRIMARY">
+    <key id="311" parent="299" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="313" parent="297" name="date">
+    <key id="312" parent="299" name="date">
       <UnderlyingIndexName>date</UnderlyingIndexName>
     </key>
-    <column id="314" parent="298" name="user_id">
+    <column id="313" parent="300" name="user_id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="315" parent="298" name="drawing_id">
+    <column id="314" parent="300" name="drawing_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="316" parent="298" name="drawing_likes_ibfk_1">
+    <foreign-key id="315" parent="300" name="drawing_likes_ibfk_1">
       <ColNames>user_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="317" parent="298" name="drawing_likes_ibfk_2">
+    <foreign-key id="316" parent="300" name="drawing_likes_ibfk_2">
       <ColNames>drawing_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>drawings</RefTableName>
     </foreign-key>
-    <index id="318" parent="298" name="PRIMARY">
+    <index id="317" parent="300" name="PRIMARY">
       <ColNames>user_id
 drawing_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="319" parent="298" name="drawing_id">
+    <index id="318" parent="300" name="drawing_id">
       <ColNames>drawing_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="320" parent="298" name="PRIMARY">
+    <key id="319" parent="300" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="321" parent="299" name="id">
+    <column id="320" parent="301" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="322" parent="299" name="user_id">
+    <column id="321" parent="301" name="user_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="323" parent="299" name="image_url">
+    <column id="322" parent="301" name="image_url">
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="324" parent="299" name="description">
+    <column id="323" parent="301" name="description">
       <Position>4</Position>
-      <StoredType>varchar(255)|0s</StoredType>
+      <StoredType>text|0s</StoredType>
     </column>
-    <column id="325" parent="299" name="likes_count">
+    <column id="324" parent="301" name="likes_count">
       <DefaultExpression>0</DefaultExpression>
       <Position>5</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="326" parent="299" name="created_at">
+    <column id="325" parent="301" name="created_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>6</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <foreign-key id="327" parent="299" name="FKmj7kyv2o016j8usgcha41odx3">
-      <ColNames>user_id</ColNames>
-      <RefColNames>id</RefColNames>
-      <RefTableName>user</RefTableName>
-    </foreign-key>
-    <foreign-key id="328" parent="299" name="drawings_ibfk_1">
+    <foreign-key id="326" parent="301" name="drawings_ibfk_1">
       <ColNames>user_id</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <index id="329" parent="299" name="PRIMARY">
+    <index id="327" parent="301" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="330" parent="299" name="FKmj7kyv2o016j8usgcha41odx3">
+    <index id="328" parent="301" name="user_id">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="331" parent="299" name="PRIMARY">
+    <key id="329" parent="301" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="332" parent="300" name="follower_id">
+    <column id="330" parent="302" name="follower_id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="333" parent="300" name="following_id">
+    <column id="331" parent="302" name="following_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="334" parent="300" name="followers_ibfk_1">
+    <foreign-key id="332" parent="302" name="followers_ibfk_1">
       <ColNames>follower_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="335" parent="300" name="followers_ibfk_2">
+    <foreign-key id="333" parent="302" name="followers_ibfk_2">
       <ColNames>following_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <index id="336" parent="300" name="PRIMARY">
+    <index id="334" parent="302" name="PRIMARY">
       <ColNames>follower_id
 following_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="337" parent="300" name="following_id">
+    <index id="335" parent="302" name="following_id">
       <ColNames>following_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="338" parent="300" name="PRIMARY">
+    <key id="336" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="339" parent="301" name="id">
+    <column id="337" parent="303" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="340" parent="301" name="date_generated">
-      <Position>2</Position>
-      <StoredType>datetime(6)|0s</StoredType>
-    </column>
-    <column id="341" parent="301" name="text">
-      <Position>3</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <index id="342" parent="301" name="PRIMARY">
-      <ColNames>id</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="343" parent="301" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="344" parent="302" name="id">
-      <AutoIncrement>1</AutoIncrement>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>bigint|0s</StoredType>
-    </column>
-    <column id="345" parent="302" name="bio">
-      <Position>2</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <column id="346" parent="302" name="created_at">
-      <Position>3</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <column id="347" parent="302" name="password">
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <column id="348" parent="302" name="profile_picture">
-      <Position>5</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <column id="349" parent="302" name="username">
-      <NotNull>1</NotNull>
-      <Position>6</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <index id="350" parent="302" name="PRIMARY">
-      <ColNames>id</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="351" parent="302" name="UKsb8bbouer5wak8vyiiy4pf2bx">
-      <ColNames>username</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="352" parent="302" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <key id="353" parent="302" name="UKsb8bbouer5wak8vyiiy4pf2bx">
-      <UnderlyingIndexName>UKsb8bbouer5wak8vyiiy4pf2bx</UnderlyingIndexName>
-    </key>
-    <column id="354" parent="303" name="user_id">
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>bigint|0s</StoredType>
-    </column>
-    <column id="355" parent="303" name="follower_id">
+    <column id="338" parent="303" name="user_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="356" parent="303" name="FKokc5w6fibhnthvwnxjxyrlfc1">
-      <ColNames>user_id</ColNames>
-      <RefColNames>id</RefColNames>
-      <RefTableName>user</RefTableName>
-    </foreign-key>
-    <foreign-key id="357" parent="303" name="FK70tvmgyh1ha7f6unsw8s6jej8">
-      <ColNames>follower_id</ColNames>
-      <RefColNames>id</RefColNames>
-      <RefTableName>user</RefTableName>
-    </foreign-key>
-    <index id="358" parent="303" name="FKokc5w6fibhnthvwnxjxyrlfc1">
-      <ColNames>user_id</ColNames>
-      <Type>btree</Type>
-    </index>
-    <index id="359" parent="303" name="FK70tvmgyh1ha7f6unsw8s6jej8">
-      <ColNames>follower_id</ColNames>
-      <Type>btree</Type>
-    </index>
-    <column id="360" parent="304" name="id">
-      <AutoIncrement>1</AutoIncrement>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>bigint|0s</StoredType>
-    </column>
-    <column id="361" parent="304" name="user_id">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StoredType>bigint|0s</StoredType>
-    </column>
-    <column id="362" parent="304" name="theme">
+    <column id="339" parent="303" name="theme">
       <DefaultExpression>&apos;light&apos;</DefaultExpression>
       <Position>3</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="363" parent="304" name="notifications_enabled">
+    <column id="340" parent="303" name="notifications_enabled">
       <DefaultExpression>1</DefaultExpression>
       <Position>4</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <foreign-key id="364" parent="304" name="user_settings_ibfk_1">
+    <foreign-key id="341" parent="303" name="user_settings_ibfk_1">
       <ColNames>user_id</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <index id="365" parent="304" name="PRIMARY">
+    <index id="342" parent="303" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="366" parent="304" name="user_id">
+    <index id="343" parent="303" name="user_id">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="367" parent="304" name="PRIMARY">
+    <key id="344" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="368" parent="305" name="id">
+    <column id="345" parent="304" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="369" parent="305" name="username">
+    <column id="346" parent="304" name="username">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="370" parent="305" name="password">
+    <column id="347" parent="304" name="password">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="371" parent="305" name="bio">
+    <column id="348" parent="304" name="bio">
       <Position>4</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="372" parent="305" name="profile_picture">
+    <column id="349" parent="304" name="profile_picture">
       <Position>5</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="373" parent="305" name="created_at">
+    <column id="350" parent="304" name="created_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>6</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <index id="374" parent="305" name="PRIMARY">
+    <index id="351" parent="304" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="375" parent="305" name="username">
+    <index id="352" parent="304" name="username">
       <ColNames>username</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="376" parent="305" name="PRIMARY">
+    <key id="353" parent="304" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="377" parent="305" name="username">
+    <key id="354" parent="304" name="username">
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
   </database-model>
