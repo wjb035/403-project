@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.drawingapp.loginscreen.LoginScreen
 import com.example.drawingapp.loginscreen.RegisterScreen
@@ -34,19 +35,38 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route
+
+                // function to retrieve the icon based on the route
+                fun getIconForItem(item: String): Int {
+                    return when (item) {
+                        "Home" -> R.drawable.home // Replace with your actual drawable resource
+                        "Profile" -> R.drawable.profile
+                        "Gallery" -> R.drawable.gallery
+                        "Search" -> R.drawable.search_icon
+                        "Settings" -> R.drawable.setting_icon
+                        else -> R.drawable.image
+                    }
+                }
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("home", "gallery", "profile", "whiteboard", "prompt")){
+                        if (currentRoute in listOf("home", "search", "gallery", "profile", "settings", "whiteboard", "prompt")){
                             NavigationBar(
                                 containerColor = MaterialTheme.colorScheme.primary
                             ) {
-                                val items = listOf("Home", "Gallery", "Profile")
+                                val items = listOf("Home", "Search", "Gallery", "Profile", "Settings")
+                                
                                 items.forEach { route ->
                                     NavigationBarItem(
-                                        icon = {},
+                                        
+                                        icon = {Icon(
+                                            painter = painterResource(id = getIconForItem(route)),
+                                            contentDescription = route
+                                            )
+
+                                        },
                                         label = { Text(route,color = MaterialTheme.colorScheme.onPrimary) },
                                         selected = false,
-                                        onClick = { navController.navigate(route) },
+                                        onClick = { navController.navigate(route.lowercase()) },
                                         colors = NavigationBarItemDefaults.colors(
                                             selectedIconColor = MaterialTheme.colorScheme.onPrimary,
                                             selectedTextColor = MaterialTheme.colorScheme.onPrimary,
@@ -55,7 +75,9 @@ class MainActivity : ComponentActivity() {
                                         )
 
                                     )
+
                                 }
+
                         }
 
                         }
@@ -92,10 +114,10 @@ class MainActivity : ComponentActivity() {
                         composable(route = "register"){
                             RegisterScreen(navCon=navController)
                         }
-                        composable(route = "settings") {
+                        composable(route = "search") {
                             SearchScreen(navCon=navController)
                         }
-                        composable(route = "search") {
+                        composable(route = "settings") {
                             SettingsScreen(navCon=navController)
                         }
 
