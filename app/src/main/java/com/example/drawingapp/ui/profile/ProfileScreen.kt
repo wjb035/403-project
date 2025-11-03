@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,44 +39,52 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.drawingapp.R
+import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
+import com.example.drawingapp.ui.whiteboardtheme.md_theme_dark_onPrimary
 
 @Composable
 fun ProfileScreen(navCon: NavController) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBar(
-            name = "example_name",
-            modifier = Modifier
-                .padding(10.dp)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        ProfileSection()
-        Spacer(modifier = Modifier.height(25.dp))
-        ButtonSection(modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(25.dp))
-        PostSection(
-            posts = listOf(
-                painterResource(id = R.drawable.example_drawing_1),
-                painterResource(id = R.drawable.example_drawing_2),
-                painterResource(id = R.drawable.example_drawing_3),
-                painterResource(id = R.drawable.example_drawing_4),
-                painterResource(id = R.drawable.example_drawing_5),
-                painterResource(id = R.drawable.example_drawing_6),
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
+    WhiteboardSimTheme {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.white_layer),
+                contentDescription = "background",
+                contentScale = ContentScale.FillBounds
+            )
+        }
 
+        Column(modifier = Modifier.fillMaxSize()) {
+            TopBar(
+                name = "profile_screen",
+            )
+            ProfileSection()
+            PostSection(
+                posts = listOf(
+                    painterResource(id = R.drawable.example_drawing_1),
+                    painterResource(id = R.drawable.example_drawing_2),
+                    painterResource(id = R.drawable.example_drawing_3),
+                    painterResource(id = R.drawable.example_drawing_4),
+                    painterResource(id = R.drawable.example_drawing_5),
+                    painterResource(id = R.drawable.example_drawing_6),
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+        }
     }
 }
 
@@ -85,21 +95,23 @@ fun TopBar(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
+        horizontalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(10.dp)
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = R.drawable.back_arrow),
             contentDescription = "Back",
-            tint = Color.Black,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(48.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = name,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontSize = 20.sp
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -110,12 +122,16 @@ fun TopBar(
 fun ProfileSection(
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.secondary)
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 40.dp, vertical = 15.dp)
         ) {
             RoundImage(
                 image = painterResource(id = R.drawable.generic_pfp),
@@ -129,13 +145,14 @@ fun ProfileSection(
         ProfileDescription(
             description = "This is an example description for viewing purposes"
         )
+        ButtonSection(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp))
     }
 }
 
 @Composable
 fun RoundImage(
     image: Painter,
-    modifier: Modifier = Modifier
+    modifier : Modifier = Modifier
 ) {
     Image(
         painter = image,
@@ -144,7 +161,7 @@ fun RoundImage(
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .border(
                 width = 1.dp,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.secondary,
                 shape = CircleShape
             )
             .padding(3.dp)
@@ -178,10 +195,15 @@ fun ProfileStat(
         Text(
             text = numberText,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onPrimary
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = text)
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
@@ -200,19 +222,18 @@ fun ProfileDescription(
         Text(
             text = description,
             letterSpacing = letterSpacing,
-            lineHeight = lineHeight
+            lineHeight = lineHeight,
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
-
-
 
 @Composable
 fun ButtonSection(
     modifier: Modifier = Modifier
 ) {
-    val minWidth = 95.dp
-    val height = 30.dp
+    val minWidth = 100.dp
+    val height = 40.dp
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
@@ -222,6 +243,8 @@ fun ButtonSection(
             modifier = Modifier
                 .defaultMinSize(minWidth = minWidth)
                 .height(height)
+                .clip(RoundedCornerShape(10.dp))
+                .background(color = MaterialTheme.colorScheme.primary)
         )
     }
 }
@@ -237,24 +260,25 @@ fun ActionButton(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .border(
-                width = 1.dp,
-                color = Color.LightGray,
-                shape = RoundedCornerShape(5.dp)
+                width = 5.dp,
+                color = MaterialTheme.colorScheme.onPrimary,
+                shape = RoundedCornerShape(10.dp)
             )
-            .padding(6.dp)
+            .padding(10.dp)
     ) {
         if(text != null) {
             Text(
                 text = text,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         if(icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.Black
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -269,37 +293,29 @@ fun PostSection(
     var selectedPost by remember { mutableStateOf<Painter?>(null) }
 
     // The key fix is this BoxWithConstraints + clip = false
-    BoxWithConstraints(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
         modifier = modifier
-            .fillMaxSize()
-            .graphicsLayer { clip = false }
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer { clip = false }
-        ) {
-            items(posts.size) { index ->
-                Image(
-                    painter = posts[index],
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .border(1.dp, Color.White)
-                        .clickable { selectedPost = posts[index] }
-                )
-            }
-        }
-
-        // Overlay viewer — it will now draw freely
-        if (selectedPost != null) {
-            PhotoClick(
-                post = selectedPost!!,
-                onDismiss = { selectedPost = null }
+        items(posts.size) { index ->
+            Image(
+                painter = posts[index],
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .border(1.dp, MaterialTheme.colorScheme.surface)
+                    .clickable { selectedPost = posts[index] }
             )
         }
+    }
+
+    // Overlay viewer — it will now draw freely
+    if (selectedPost != null) {
+        PhotoClick(
+            post = selectedPost!!,
+            onDismiss = { }
+        )
     }
 }
 
@@ -314,11 +330,10 @@ fun PhotoClick(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
-            .wrapContentSize(unbounded = true)
     ) {
         Box(modifier = Modifier
-            .size(1100.dp)
-            .background(Color.Black.copy(alpha = 0.5f))
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f))
             .clickable(onClick = onDismiss)
         )
 
@@ -349,3 +364,8 @@ fun PhotoClick(
     }
 }
 
+@Preview
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(navCon = NavController(LocalContext.current))
+}
