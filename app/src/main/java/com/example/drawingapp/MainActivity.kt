@@ -17,11 +17,16 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
+import androidx.navigation.NavController
 import com.example.drawingapp.loginscreen.LoginScreen
 import com.example.drawingapp.loginscreen.RegisterScreen
+import com.example.drawingapp.ui.search.SearchScreen
+import com.example.drawingapp.ui.settings.SettingsScreen
+
 
 
 class MainActivity : ComponentActivity() {
+    @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,6 +91,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "register"){
                             RegisterScreen(navCon=navController)
+                        }
+                        composable(route = "settings") {
+                            SearchScreen(navCon=navController)
+                        }
+                        composable(route = "search") {
+                            SettingsScreen(navCon=navController)
                         }
 
                     }
