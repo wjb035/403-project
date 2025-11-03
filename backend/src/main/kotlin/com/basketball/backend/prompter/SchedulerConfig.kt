@@ -24,20 +24,25 @@ public class SchedulerConfig(private val promptController: PromptController) {
 
     // Scheudles the prompt form a random hour or minute
     private fun scheduleNextPrompt() {
-        val now = Calendar.getInstance()
-        val randomHour = (9..17).random()
-        val randomMinute = (0..59).random()
+        val delay = if (demoMode) {
+            TimeUnit.SECONDS.toMillis(demoIntervalSeconds)
+        } else{
+            val now = Calendar.getInstance()
+            val randomHour = (9..17).random()
+            val randomMinute = (0..59).random()
 
-        val nextRun = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, randomHour)
-            set(Calendar.MINUTE, randomMinute)
-            set(Calendar.SECOND, 0)
-            if (timeInMillis <= now.timeInMillis) {
-                add(Calendar.DAY_OF_YEAR, 1)
+            val nextRun = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, randomHour)
+                set(Calendar.MINUTE, randomMinute)
+                set(Calendar.SECOND, 0)
+                if (timeInMillis <= now.timeInMillis) {
+                    add(Calendar.DAY_OF_YEAR, 1)
+                }
             }
+
+            nextRun.timeInMillis - now.timeInMillis
         }
 
-        val delay = nextRun.timeInMillis - now.timeInMillis
 
         future ?.cancel(false) // cancel previous task if it exists
         future = scheduler.schedule({
@@ -45,7 +50,12 @@ public class SchedulerConfig(private val promptController: PromptController) {
                 scheduleNextPrompt() // schedule next day
         }, Date(System.currentTimeMillis() + delay))
 
-        println("Next daily prompt scheduled at: ${nextRun.time}")
+        println(
+            if (demoMode)
+                "Demo: Next prompt in $demoIntervalSeconds seconds"
+            else
+                "Next daily prompt scheduled at: ${nextRun.time}"
+        )
     }
 
 }

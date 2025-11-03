@@ -3,17 +3,20 @@ package com.example.drawingapp.ui
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.health.connect.datatypes.Device
+import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,14 +51,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.applyCanvas
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
@@ -70,34 +70,39 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.example.drawingapp.R
-import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import android.util.Log
+import com.example.drawingapp.network.RetrofitInstance
+import com.example.drawingapp.network.PromptApi
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "drawData")
 
 @Composable
-fun whiteboard(navCon: NavController) {
-    WhiteboardSimTheme {
+fun whiteboard(navCon: NavController){
     val context = LocalContext.current.applicationContext
     val coroutineScope = rememberCoroutineScope()
 
     // Variables that we use later on, including the current pen color, the list of lines (on the canvas),
     // the size of the brush, whether we're erasing or not, and whether we can draw or not.
-    var currentColor by remember { mutableStateOf(Color.Black) }
-    val lines = remember { mutableStateListOf<Line>() }
-    var brushSize by remember { mutableFloatStateOf(10f) }
-    var isEraser by remember { mutableStateOf(false) }
-    var canDraw by remember { mutableStateOf(false) }
-    var remainingTime by remember { mutableStateOf(10000L) }
-    var countdown by remember { mutableStateOf("Press \"Ready\" when you're ready to draw!") }
-    var userHasStarted by remember { mutableStateOf(false) }
-
+    var currentColor by remember {mutableStateOf(Color.Black)}
+    val lines = remember{ mutableStateListOf<Line>()}
+    var brushSize by remember {mutableFloatStateOf(10f)}
+    var isEraser by remember {mutableStateOf(false)}
+    var canDraw by remember {mutableStateOf(false)}
+    var remainingTime by remember{mutableStateOf(10000L)}
+    var countdown by remember{mutableStateOf("Press \"Ready\" when you're ready to draw!")}
+    var userHasStarted by remember{mutableStateOf(false)}
+    var showButton by remember{mutableStateOf(false)}
     val drawData = booleanPreferencesKey("drawData")
+    var displayReady by remember{mutableStateOf(true)}
+    var uriDay by remember{mutableStateOf<Uri?>(null)}
+    var getUriFromCanvas by remember { mutableStateOf(false) }
     /*val drawFlow: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             // No type safety.
@@ -106,22 +111,22 @@ fun whiteboard(navCon: NavController) {
 */
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
+    ) {granted ->
         if (!granted) {
-            Toast.makeText(
-                context,
-                "This app requires permission for something",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(context, "This app requires permission for something", Toast.LENGTH_SHORT).show()
 
         }
     }
     // PROMPT LOAD HERE
-    var prompt by remember { mutableStateOf("Loading daily prompt...") }
+    var prompt by remember {mutableStateOf("Loading daily prompt...")}
     LaunchedEffect(Unit) {
-        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val savedPrompt = prefs.getString("daily_prompt", null)
-        prompt = savedPrompt ?: "No daily prompt available yet."
+        try {
+            val response = RetrofitInstance.promptApi.getTodaysPrompt()
+            prompt = response.text
+        } catch (e: Exception) {
+            prompt = "Failed to load prompt."
+            Log.e("Whiteboard", "Error fetching prompt", e)
+        }
     }
 
 
@@ -138,103 +143,142 @@ fun whiteboard(navCon: NavController) {
                     }
 
                     override fun onFinish() {
+
                         countdown = "Time's up!"
                         canDraw = false
                         coroutineScope.launch {
                             incrementCounter(context, drawData, false)
                         }
+
+                        showButton = true
+
                     }
                 }.start()
             }
         }
     }
+
+    // I don't think this is necessary? But I'm afraid to get rid of it.
     LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.white_layer),
-                contentDescription = "background",
-                contentScale = ContentScale.FillBounds
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 0.dp, y = 100.dp)
-        ) {
-            Row(
-                Modifier.fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = prompt,
-                    modifier = Modifier,
-                    fontSize = 18.sp
-                )
-
-            }
-        }
+    LaunchedEffect(Unit){
+        displayReady = getHasDrawn(context, drawData)
     }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 240.dp, y = 50.dp)
-        ) {
+    //LaunchedEffect(getUriFromCanvas){
+        //uriDay= saveDrawing(context,lines, true)
+    //}
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 240.dp, y = 20.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ) {
+            ){
 
-                Button(onClick = {
-                    if (!userHasStarted) {
-                        userHasStarted = true
-                        canDraw = true
+                AnimatedVisibility(
+                    visible = showButton,
+
+                ) {Button(onClick = {
+                    coroutineScope.launch {
+                        uriDay = saveDrawing(context, lines, false, prompt)
+
+
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            //putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                            putExtra(Intent.EXTRA_STREAM, uriDay)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            type = "image/png"
+                            //type = "text/plain"
+                        }
+
+
+                        context.startActivity(sendIntent)
                     }
+
                 }) {
-                    Text("Ready?")
+                    Text("Share")
                 }
 
+            }}
+        }
+    }
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 50.dp, y = 100.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(text= prompt,
+                    modifier=Modifier,
+                    fontSize = 18.sp)
+
+            }
+        }
+    }
+
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 120.dp, y = 20.dp)){
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                AnimatedVisibility(
+
+                    visible = displayReady
+
+                    ) {
+                    Button(onClick = {
+                        if (!userHasStarted) {
+                            userHasStarted = true
+                            canDraw = true
+                        }
+                    }) {
+                        Text("Ready?")
+                    }
+                }
             }
         }
     }
 
     // Debug button that simply refreshes the dataStore value. It is not reset otherwise, making
     // this a temporary yet necessary evil. This will be removed in the near future.
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 220.dp, y = 20.dp)
-        ) {
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 240.dp, y = 80.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ) {
+            ){
 
-                /* Button(onClick = {
-                     coroutineScope.launch {
-                         incrementCounter(context, drawData, true)
+                Button(onClick = {
+                    coroutineScope.launch {
+                        incrementCounter(context, drawData, true)
 
-                     }
-                 }) {
-                     Text("Reset?")
-                 }*/
+                    }
+                }) {
+                    Text("Reset?")
+                }
 
             }
         }
@@ -243,18 +287,16 @@ fun whiteboard(navCon: NavController) {
 
     // A button within a box (for tidy placement). This button goes back to the home screen using the passed
     // in navController.
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 25.dp, y = 50.dp)
-        ) {
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 25.dp, y = 50.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ) {
+            ){
 
                 Button(onClick = {
                     navCon.navigate("home")
@@ -265,23 +307,19 @@ fun whiteboard(navCon: NavController) {
             }
         }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 0.dp, y = 150.dp)
-        ) {
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .offset(x = 50.dp, y = 150.dp)){
             Row(
                 Modifier.fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = countdown,
-                    modifier = Modifier,
-                    fontSize = 18.sp
-                )
+            ){
+                Text(text=countdown,
+                    modifier=Modifier,
+                    fontSize = 18.sp)
 
             }
         }
@@ -291,18 +329,14 @@ fun whiteboard(navCon: NavController) {
     // Box containing the widget for all the selectable colors, as well as whether you can erase or not.
     // Clicking a color button will change your pen color to that color, and clicking the erase button will
     // swap to erase mode.
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 0.dp, y = 610.dp)
-        ) {
-            Row(
-                Modifier.fillMaxWidth()
-                    .padding(4.dp),
+    Box(modifier=Modifier.fillMaxSize()){
+        Column(modifier=Modifier
+            .fillMaxWidth()
+            .offset(x=100.dp,y=610.dp)){
+            Row(Modifier.fillMaxWidth()
+                .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                verticalAlignment = Alignment.CenterVertically){
                 selectColor { selectedColor ->
                     currentColor = selectedColor
                     isEraser = false
@@ -315,12 +349,10 @@ fun whiteboard(navCon: NavController) {
     }
     // Box that contains the pen size changer, the reset canvas button, and the save button.
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp)
-                .align(Alignment.BottomCenter)
-        ) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+            .align(Alignment.BottomCenter)) {
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
@@ -340,7 +372,7 @@ fun whiteboard(navCon: NavController) {
                 }
                 Button(onClick = {
                     coroutineScope.launch {
-                        saveDrawing(context, lines)
+                        saveDrawing(context, lines, true, prompt)
                     }
                 }) {
                     Text("Save")
@@ -348,15 +380,13 @@ fun whiteboard(navCon: NavController) {
             }
         }
         // The star of the show- the canvas.
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .offset(5.dp, 200.dp)
-        ) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .offset(5.dp,200.dp)) {
             Canvas(
                 modifier = Modifier.size(width = 400.dp, height = 400.dp)
                     .background(Color.White)
-                    .border(6.dp, Color.Black)
+                    .border(6.dp,Color.Black)
                     .pointerInput(true) {
                         val drawFlow: Flow<Boolean> = context.dataStore.data
                             .map { settings ->
@@ -370,12 +400,10 @@ fun whiteboard(navCon: NavController) {
                             // There was a weird issue where lines were being cut of incorrectly, and it had to do
                             // with the fact I wasn't checking if the line started in the canvas. That is why I check if
                             // all lines start and end in the canvas. Otherwise: it's not applied.
-                            val startReal = change.position - dragAmount
+                            val startReal = change.position-dragAmount
                             val endReal = change.position
-                            val startOBS =
-                                startReal.x < 0f || startReal.x > 1000f || startReal.y < 0f || startReal.y > 1000f
-                            val endOBS =
-                                endReal.x < 0f || endReal.x > 1000f || endReal.y < 0f || endReal.y > 1000f
+                            val startOBS = startReal.x < 0f || startReal.x > 1000f || startReal.y < 0f || startReal.y > 1000f
+                            val endOBS = endReal.x < 0f || endReal.x > 1000f || endReal.y < 0f || endReal.y > 1000f
 
                             // If the user is within bounds, and is able to draw (timer hasn't expired,
                             // the line is applied.
@@ -406,9 +434,15 @@ fun whiteboard(navCon: NavController) {
             }
         }
     }
-    }
 }
-
+suspend fun getHasDrawn(context: Context,drawData: Preferences.Key<Boolean>): Boolean{
+    val drawFlow: Flow<Boolean> = context.dataStore.data
+        .map { settings ->
+            // No type safety.
+            settings[drawData] ?: true
+        }
+    return drawFlow.first()
+}
 
 suspend fun incrementCounter(context: Context,drawData: Preferences.Key<Boolean>, result: Boolean) {
     context.dataStore.edit { settings ->
@@ -471,7 +505,7 @@ data class Line(val start: Offset, val end: Offset, val color: Color, val stroke
 
 // All this fun stuff is for saving the drawing as an image. The code from this came from this video:
 // https://youtu.be/nMeO3XxjfBs?si=8Pkxk9B5QIwBqa8d
-suspend fun saveDrawing(context: Context, lines: List<Line>){
+suspend fun saveDrawing(context: Context, lines: List<Line>,downloadToDevice: Boolean, prompt: String): Uri? {
     val bitmap = Bitmap.createBitmap(1000,1000,Bitmap.Config.ARGB_8888)
     bitmap.applyCanvas {
         drawColor(android.graphics.Color.WHITE)
@@ -488,9 +522,11 @@ suspend fun saveDrawing(context: Context, lines: List<Line>){
         }
     }
     val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, "drawing_${System.currentTimeMillis()}")
+        put(MediaStore.MediaColumns.DISPLAY_NAME, "quickdraw-${prompt}")
         put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-        put(MediaStore.MediaColumns.RELATIVE_PATH,"Pictures/WhiteboardSim")
+        if (downloadToDevice) {
+            put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/WhiteboardSim")
+        }
     }
 
     val resolver = context.contentResolver
@@ -502,18 +538,16 @@ suspend fun saveDrawing(context: Context, lines: List<Line>){
             if (it != null){
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
             }
-            Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+            if (downloadToDevice) {
+                Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
     else{
         Toast.makeText(context, "Unable to save, please try again.", Toast.LENGTH_SHORT).show()
     }
+    return uri
 }
 
 
-@Preview
-@Composable
-fun whiteboardPreview(){
-    whiteboard(navCon = NavController(LocalContext.current))
-}
