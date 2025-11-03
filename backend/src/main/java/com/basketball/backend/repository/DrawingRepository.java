@@ -11,10 +11,10 @@ import java.util.List;
 @Repository
 public interface DrawingRepository extends JpaRepository<Drawing, Long> {
 
-    // custom method to find a drawing by the user's ID-
+    // custom method to find a drawing by timestamp
     List<Drawing> findAllByOrderByCreatedAtDesc();
 
-    // customm ethod for getting drawings sorted by likes descending
+    // customm method for getting drawings sorted by likes descending
     List<Drawing> findAllByOrderByLikesCountDesc();
 }
 
