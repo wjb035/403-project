@@ -79,14 +79,14 @@ fun HomeScreen(navCon: NavController) {
                         // Leaderboard Button
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { navCon.navigate("leaderboardActivity") }
+                            modifier = Modifier.clickable { navCon.navigate("whiteboard") }
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.leaderboard),
                                 contentDescription = "Leaderboard",
                                 modifier = Modifier.size(60.dp)
                             )
-                            Text("Leaderboard", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Whiteboard", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         }
 
                         // Search Button
