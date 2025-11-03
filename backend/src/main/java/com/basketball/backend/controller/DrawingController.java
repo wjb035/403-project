@@ -15,6 +15,8 @@ public class DrawingController {
 
     @Autowired
     private DrawingRepository drawingRepository;
+    @Autowired
+    private DrawingLikeRepository drawingLikeRepository;
 
     // GET all drawings for leaderboard (sorted by likes or timestamp)
     @GetMapping("/leaderboard/likes")
@@ -36,31 +38,42 @@ public class DrawingController {
         return drawingRepository.save(drawing);
     }
 
-    @PostMapping("/like/{drawingId}")
+    @PostMapping("/like/{drawingId}/{userId}")
     public Drawing likeDrawing(@PathVariable Long drawingId) {
         Drawing drawing = drawingRepository.findById(drawingId).orElse(null);
-
-
         if (drawing == null) {
             throw new RuntimeException("Drawing not found");
         }
 
-        drawing.setLikesCount(drawing.getLikesCount() + 1);
+        // Check if the user already liked
+        if (drawingLikeRepository.findByUserIdAndDrawingId(userId, drawingId).isPresent()) {
+            throw new RuntimeException("User already liked this drawing");
+        }
 
+        // Record the like
+        DrawingLike like = new DrawingLike();
+        like.setUserId(userId);
+        like.setDrawingId(drawingId);
+        drawingLikeRepository.save(like);
+
+        // Update the cached count
+        drawing.setLikesCount(drawing.getLikesCount() + 1);
         return drawingRepository.save(drawing);
     }
 
-    @PostMapping("/unlike/{username}")
+    @PostMapping("/unlike/{drawingId}/{userId}")
     public Drawing unlikeDrawing(@PathVariable Long drawingId) {
         Drawing drawing = drawingRepository.findById(drawingId).orElse(null);
-
-
         if (drawing == null) {
             throw new RuntimeException("Drawing not found");
         }
 
-        drawing.setLikesCount(Math.max(0, drawing.getLikesCount() - 1));
+        // Remove the like from the drawingLike repository
+        drawingLikeRepository.findByUserIdAndDrawingId(userId, drawingId)
+                .ifPresent(like -> drawingLikeRepository.delete(like));
 
+        // Update the cached count
+        drawing.setLikesCount(Math.max(0, drawing.getLikesCount() - 1));
         return drawingRepository.save(drawing);
     }
 }
