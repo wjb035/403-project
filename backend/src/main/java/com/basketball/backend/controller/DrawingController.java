@@ -16,11 +16,18 @@ public class DrawingController {
     @Autowired
     private DrawingRepository drawingRepository;
 
-    // GET all drawings for leaderboard (sorted by likes)
-    @GetMapping("/leaderboard")
-    public List<Drawing> getLeaderboard() {
+    // GET all drawings for leaderboard (sorted by likes or timestamp)
+    @GetMapping("/leaderboard/likes")
+    public List<Drawing> getLeaderboardByLikes() {
         return drawingRepository.findAllByOrderByLikesCountDesc();
     }
+
+    @GetMapping("/leaderboard/new")
+    public List<Drawing> getLeaderboardByTimestamp() {
+        return drawingRepository.findAllByOrderByCreatedAtDesc();;
+    }
+
+
 
     // POST /api/users/register
     // stores a drawing to the user's profile
