@@ -73,6 +73,11 @@ import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import android.util.Log
+import com.example.drawingapp.network.RetrofitInstance
+import com.example.drawingapp.network.PromptApi
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 
@@ -115,9 +120,13 @@ fun whiteboard(navCon: NavController){
     // PROMPT LOAD HERE
     var prompt by remember {mutableStateOf("Loading daily prompt...")}
     LaunchedEffect(Unit) {
-        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val savedPrompt = prefs.getString("daily_prompt", null)
-        prompt = savedPrompt ?: "No daily prompt available yet."
+        try {
+            val response = RetrofitInstance.promptApi.getTodaysPrompt()
+            prompt = response.text
+        } catch (e: Exception) {
+            prompt = "Failed to load prompt."
+            Log.e("Whiteboard", "Error fetching prompt", e)
+        }
     }
 
 

@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://localhost:8080/"
+    private const val BASE_URL = "http://10.0.2.2:8080/"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -16,14 +16,16 @@ object RetrofitInstance {
         .addInterceptor(logging)
         .build()
 
-    val api: DrawingApi by lazy {
+    private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(DrawingApi::class.java)
     }
+
+    val drawingApi: DrawingApi by lazy { retrofit.create(DrawingApi::class.java) }
+    val promptApi: PromptApi by lazy { retrofit.create(PromptApi::class.java) }
 
 
 }
