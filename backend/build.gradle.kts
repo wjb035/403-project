@@ -2,8 +2,8 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.5.7"
 	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("jvm") version "1.9.0"
-    kotlin("plugin.spring") version "1.9.0"
+	kotlin("jvm") version "1.9.10"
+    kotlin("plugin.spring") version "1.9.10"
 }
 
 group = "com.basketball"
@@ -44,6 +44,10 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.named("compileJava") {
+    dependsOn("compileKotlin")
 }
 
 tasks.processResources {

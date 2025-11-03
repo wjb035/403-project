@@ -4,7 +4,6 @@ import com.basketball.backend.model.Prompt;
 import com.basketball.backend.repository.PromptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.basketball.backend.prompter.WordFetch;
 import com.basketball.backend.prompter.BackendWordFetcher;
 import org.springframework.scheduling.annotation.Scheduled;
 import java.sql.Timestamp;
