@@ -54,7 +54,7 @@ import com.example.drawingapp.R
 fun ProfileScreen(navCon: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
-            name = "example_name",
+            name = "Name",
             modifier = Modifier
                 .padding(10.dp)
         )
@@ -293,7 +293,6 @@ fun PostSection(
             }
         }
 
-        // Overlay viewer — it will now draw freely
         if (selectedPost != null) {
             PhotoClick(
                 post = selectedPost!!,
