@@ -20,6 +20,10 @@ public class SchedulerConfig(private val promptController: PromptController) {
 
     private var future: ScheduledFuture<*>? = null
 
+    // demo mode
+    private val demoMode = true
+    private val demoIntervalSeconds = 10L
+
     init { scheduleNextPrompt() }
 
     // Scheudles the prompt form a random hour or minute
@@ -54,7 +58,7 @@ public class SchedulerConfig(private val promptController: PromptController) {
             if (demoMode)
                 "Demo: Next prompt in $demoIntervalSeconds seconds"
             else
-                "Next daily prompt scheduled at: ${nextRun.time}"
+                "Next daily prompt scheduled"
         )
     }
 
