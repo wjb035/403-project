@@ -8,5 +8,6 @@ data class User (
     var bio: String = "",
     var profilePicture: String = "",
     var createdAt: String = "",
-    var followers: List<User> = emptyList()
+    var followers: List<User> = emptyList(),
+    var following: List<User> = emptyList()
 )
