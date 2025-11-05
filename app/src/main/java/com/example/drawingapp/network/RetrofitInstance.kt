@@ -26,7 +26,7 @@ object RetrofitInstance {
 
     val drawingApi: DrawingApi by lazy { retrofit.create(DrawingApi::class.java) }
 
-    val userApi: DrawingApi by lazy { retrofit.create(DrawingApi::class.java) }
+    val userApi: DrawingApi by lazy { retrofit.create(UserApi::class.java) }
     val promptApi: PromptApi by lazy { retrofit.create(PromptApi::class.java) }
 
 
