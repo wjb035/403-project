@@ -69,7 +69,8 @@ fun leaderboard(navCon: NavController) {
             AlertDialog(onDismiss = { showDialog = false }, postID)
         }
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()
+           ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,7 +95,8 @@ fun leaderboard(navCon: NavController) {
             val list = listOf(
                 "A", "B", "C", "D"
             ) + ((0..100).map { it.toString() })
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()
+                .offset(0.dp, 50.dp)) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
