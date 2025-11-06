@@ -51,7 +51,9 @@ fun RegisterScreen(navCon: NavController) {
             Image(
                 painter = painterResource(id = R.drawable.white_layer),
                 contentDescription = "background",
-                contentScale = ContentScale.FillBounds
+                //contentDescription = "background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
             )
         }
 
@@ -130,7 +132,7 @@ fun RegisterScreen(navCon: NavController) {
 
                     })
                 },
-                modifier = Modifier.fillMaxWidth(),
+                //modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
