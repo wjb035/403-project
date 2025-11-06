@@ -53,7 +53,7 @@ fun SettingsScreen(navCon: NavController) {
         }
         Spacer(modifier = Modifier.height(25.dp))
         Button(
-            modifier = Modifier.fillMaxWidth(),
+            //modifier = Modifier.fillMaxWidth(),
             onClick = { isEdit = !isEdit }
         ) {
             Text(text = "Edit Profile")
@@ -73,7 +73,7 @@ fun SettingsScreen(navCon: NavController) {
         NotificationButton()
 
         Button(
-            modifier = Modifier.fillMaxWidth(),
+            //modifier = Modifier.fillMaxWidth(),
             onClick = { exitProcess(0) }
         ) {
             Text(text = "DELETE ACCOUNT")

@@ -94,26 +94,34 @@ fun leaderboard(navCon: NavController) {
             val list = listOf(
                 "A", "B", "C", "D"
             ) + ((0..100).map { it.toString() })
-
-            LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
-                items(items = list, itemContent = { item ->
-                    IconButton(
-                        onClick = {
-                            showDialog = true
-                            postID = item
-                        },
-                        modifier = Modifier
-                            .width(400.dp)
-                            .height(300.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.image),
-                            contentDescription = "Image",
-                            modifier = Modifier.fillMaxSize()
-                        )
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
+                        items(items = list, itemContent = { item ->
+                            IconButton(
+                                onClick = {
+                                    showDialog = true
+                                    postID = item
+                                },
+                                modifier = Modifier
+                                    .width(400.dp)
+                                    .height(300.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image),
+                                    contentDescription = "Image",
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        })
                     }
-                })
-            }
+                }
+                }
         }
     }
 }
