@@ -44,7 +44,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -75,6 +74,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -190,19 +190,23 @@ fun whiteboard(navCon: NavController) {
             Image(
                 painter = painterResource(id = R.drawable.white_layer),
                 contentDescription = "background",
-                contentScale = ContentScale.FillBounds
+                //contentDescription = "background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+                //contentScale = ContentScale.FillBounds
+
             )
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 240.dp, y = 20.dp)
+
         ) {
             Row(
                 Modifier.fillMaxWidth()
                     .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -241,7 +245,7 @@ fun whiteboard(navCon: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 100.dp)
+                .offset(x = 0.dp, y = 80.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -252,102 +256,68 @@ fun whiteboard(navCon: NavController) {
                 Text(
                     text = prompt,
                     modifier = Modifier,
-                    fontSize = 18.sp
+                    fontSize = 22.sp
                 )
 
             }
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 0.dp, y = 40.dp)
-        ) {
-            Row(
-                Modifier.fillMaxWidth()
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+                    .align(Alignment.TopCenter)
+                    .offset(x = 0.dp, y = 40.dp)
             ) {
-
-                AnimatedVisibility(
-
-                    visible = displayReady
-
+                Row(
+                    Modifier.fillMaxWidth()
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+
                     Button(onClick = {
-                        if (!userHasStarted) {
-                            userHasStarted = true
-                            canDraw = true
+                        navCon.navigate("home")
+                    }) {
+                        Text("home")
+                    }
+                    AnimatedVisibility(
+
+                        visible = displayReady
+
+                    ) {
+                        Button(onClick = {
+                            if (!userHasStarted) {
+                                userHasStarted = true
+                                canDraw = true
+                            }
+                        }) {
+                            Text("Ready?")
+                        }
+                    }
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            incrementCounter(context, drawData, true)
+
                         }
                     }) {
-                        Text("Ready?")
+                        Text("Reset?")
                     }
+
+
                 }
             }
-        }
-    }
 
-    // Debug button that simply refreshes the dataStore value. It is not reset otherwise, making
-    // this a temporary yet necessary evil. This will be removed in the near future.
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 280.dp, y = 40.dp)
-        ) {
-            Row(
-                Modifier.fillMaxWidth()
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Button(onClick = {
-                    coroutineScope.launch {
-                        incrementCounter(context, drawData, true)
-
-                    }
-                }) {
-                    Text("Reset?")
-                }
-
-            }
-        }
-    }
-
-
-    // A button within a box (for tidy placement). This button goes back to the home screen using the passed
-    // in navController.
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 0.dp, y = 40.dp)
-        ) {
-            Row(
-                Modifier.fillMaxWidth()
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Button(onClick = {
-                    navCon.navigate("home")
-                }) {
-                    Text("home")
-                }
-
-            }
-        }
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = 0.dp, y = 150.dp)
+                .offset(x = 0.dp, y = 110.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -373,7 +343,9 @@ fun whiteboard(navCon: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 610.dp)
+                .align(Alignment.BottomCenter)
+
+                .offset(x = 0.dp, y = -50.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -385,9 +357,9 @@ fun whiteboard(navCon: NavController) {
                     currentColor = selectedColor
                     isEraser = false
                 }
-                Button(onClick = { isEraser = true }) {
-                    Text("Eraser")
-                }
+                //Button(onClick = { isEraser = true }) {
+                    //Text("Eraser")
+               // }
             }
         }
     }
@@ -398,6 +370,7 @@ fun whiteboard(navCon: NavController) {
                 .fillMaxWidth()
                 .padding(4.dp)
                 .align(Alignment.BottomCenter)
+
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -425,62 +398,76 @@ fun whiteboard(navCon: NavController) {
                 }
             }
         }
+
+
+
+
         // The star of the show- the canvas.
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(0.dp, 200.dp)
+                .offset(0.dp, 0.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Canvas(
-                modifier = Modifier.size(width = 400.dp, height = 400.dp)
-                    .background(Color.White)
-                    .border(6.dp, Color.Black)
-                    .pointerInput(true) {
-                        val drawFlow: Flow<Boolean> = context.dataStore.data
-                            .map { settings ->
-                                // No type safety.
-                                settings[drawData] ?: true
-                            }
-                        val isDailyDrawing = drawFlow.first()
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
-                            // for a line to be considered within bounds it must start and end in the bounds
-                            // There was a weird issue where lines were being cut of incorrectly, and it had to do
-                            // with the fact I wasn't checking if the line started in the canvas. That is why I check if
-                            // all lines start and end in the canvas. Otherwise: it's not applied.
-                            val startReal = change.position - dragAmount
-                            val endReal = change.position
-                            val startOBS =
-                                startReal.x < 0f || startReal.x > 1000f || startReal.y < 0f || startReal.y > 1000f
-                            val endOBS =
-                                endReal.x < 0f || endReal.x > 1000f || endReal.y < 0f || endReal.y > 1000f
+            Column(
+                //modifier = Modifier.align(Center)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Canvas(
+                        modifier = Modifier.size(width = 400.dp, height = 400.dp)
+                            .background(Color.White)
+                            .border(6.dp, Color.Black)
+                            .pointerInput(true) {
+                                val drawFlow: Flow<Boolean> = context.dataStore.data
+                                    .map { settings ->
+                                        // No type safety.
+                                        settings[drawData] ?: true
+                                    }
+                                val isDailyDrawing = drawFlow.first()
+                                detectDragGestures { change, dragAmount ->
+                                    change.consume()
+                                    // for a line to be considered within bounds it must start and end in the bounds
+                                    // There was a weird issue where lines were being cut of incorrectly, and it had to do
+                                    // with the fact I wasn't checking if the line started in the canvas. That is why I check if
+                                    // all lines start and end in the canvas. Otherwise: it's not applied.
+                                    val startReal = change.position - dragAmount
+                                    val endReal = change.position
+                                    val startOBS =
+                                        startReal.x < 0f || startReal.x > 1000f || startReal.y < 0f || startReal.y > 1000f
+                                    val endOBS =
+                                        endReal.x < 0f || endReal.x > 1000f || endReal.y < 0f || endReal.y > 1000f
 
-                            // If the user is within bounds, and is able to draw (timer hasn't expired,
-                            // the line is applied.
+                                    // If the user is within bounds, and is able to draw (timer hasn't expired,
+                                    // the line is applied.
 
-                            if (!endOBS && !startOBS && canDraw && isDailyDrawing) {
-                                val line = Line(
-                                    start = change.position - dragAmount,
+                                    if (!endOBS && !startOBS && canDraw && isDailyDrawing) {
+                                        val line = Line(
+                                            start = change.position - dragAmount,
 
-                                    end = change.position,
-                                    color = if (isEraser) Color.White else currentColor,
-                                    strokeWidth = brushSize
-                                )
+                                            end = change.position,
+                                            color = if (isEraser) Color.White else currentColor,
+                                            strokeWidth = brushSize
+                                        )
 
-                                lines.add(line)
+                                        lines.add(line)
 
-                            }
+                                    }
+                                }
+                            }) {
+                        lines.forEach { line ->
+                            drawLine(
+                                color = line.color,
+                                start = line.start,
+                                end = line.end,
+                                strokeWidth = line.strokeWidth,
+                                cap = StrokeCap.Round
+                            )
                         }
-                    }) {
-                lines.forEach { line ->
-                    drawLine(
-                        color = line.color,
-                        start = line.start,
-                        end = line.end,
-                        strokeWidth = line.strokeWidth,
-                        cap = StrokeCap.Round
-                    )
+                    }
                 }
+            }
             }
         }
     }
