@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "888459833442",
+    "project_id": "quickdraw-6323f",
+    "storage_bucket": "quickdraw-6323f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888459833442:android:96517ea12861787a67613b",
+        "android_client_info": {
+          "package_name": "com.example.drawingapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEaWMSq0MX8XV9Lk3qQ0ksx0IkoxsLKJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
