@@ -7,7 +7,6 @@ data class MinimalUser(
 data class Drawing(
     val id: Long,
     val imageUrl: String,
-    val description: String,
     var likesCount: Int,
     val user: User
 )

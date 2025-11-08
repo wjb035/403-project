@@ -13,7 +13,6 @@ public class Drawing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     // Many to one relatioship between user and drawing
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
