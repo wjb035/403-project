@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                 ) {innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "login",
+                        startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
                     ){
                         composable(route = "splash") {
@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(navCon=navController)
                         }
                         composable(route = "profile"){
-                            ProfileScreen(navCon=navController)
+                            ProfileScreen(navCon=navController, userViewModel = userViewModel)
                         }
                         composable(route="gallery"){
                             leaderboard(navCon=navController, userViewModel = userViewModel)
