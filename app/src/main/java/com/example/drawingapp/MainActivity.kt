@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
                             PromptScreen(navCon=navController)
                         }
                         composable(route = "whiteboard"){
-                            whiteboard(navCon=navController)
+                            whiteboard(navCon=navController, userViewModel = userViewModel)
                         }
                         composable(route = "login"){
                             LoginScreen(navCon =navController, userViewModel = userViewModel)

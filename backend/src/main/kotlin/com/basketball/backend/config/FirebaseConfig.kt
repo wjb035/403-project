@@ -9,7 +9,7 @@ import java.io.FileInputStream
 @Configuration
 class FirebaseConfig {
     init {
-        val serviceAccount = FileInputStream("src/main/resources/firebase/quickdraw-6323f-firebase-adminsdk-fbsvc-1e3258a6ef.json")
+        val serviceAccount = FileInputStream(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 
         val options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
