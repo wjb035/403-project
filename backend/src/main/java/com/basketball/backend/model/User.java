@@ -77,5 +77,6 @@ public class User {
 
     public List<User> getFollowing() { return following; }
     public void setFollowing(List<User> following) { this.following = following; }
+
 }
 

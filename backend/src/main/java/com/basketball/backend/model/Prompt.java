@@ -15,6 +15,9 @@ public class Prompt {
     // fields
     private String text;
 
+    @Column(name = "drawing_window_open")
+    private Boolean drawingWindowOpen = true;
+
     // day the prompt was generated
     @Column(name = "date_generated")
     private Timestamp dateGenerated;
@@ -28,4 +31,7 @@ public class Prompt {
 
     public Timestamp getDateGenerated() { return dateGenerated; }
     public void setDateGenerated(Timestamp dateGenerated) { this.dateGenerated = dateGenerated; }
+
+    public Boolean getDrawingWindowOpen() { return drawingWindowOpen; }
+    public void setDrawingWindowOpen(Boolean drawingWindowOpen) { this.drawingWindowOpen = drawingWindowOpen; }
 }

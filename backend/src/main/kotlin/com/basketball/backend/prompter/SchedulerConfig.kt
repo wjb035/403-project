@@ -50,7 +50,13 @@ public class SchedulerConfig(private val promptController: PromptController) {
 
         future ?.cancel(false) // cancel previous task if it exists
         future = scheduler.schedule({
-                promptController.generateDailyPrompt()
+                val prompt = promptController.generateDailyPrompt()
+
+                // Generate prompt delay
+                scheduler.schedule({
+                    promptController.closeDrawingWindow(prompt.id)
+                }, Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis((1))))
+
                 scheduleNextPrompt() // schedule next day
         }, Date(System.currentTimeMillis() + delay))
 

@@ -20,7 +20,7 @@ class FirebaseConfig {
 
         val options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .setStorageBucket("quickdraw-6323f.appspot.com")
+            .setStorageBucket("quickdraw-6323f.firebasestorage.app")
             .setProjectId("quickdraw-6323f")
             .build()
 
