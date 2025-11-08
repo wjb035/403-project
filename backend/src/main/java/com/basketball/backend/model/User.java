@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 // This class defines the User entity that maps to the "user" table in MySQL.
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     // auto-generated incremental ID for each user stored in db
@@ -19,7 +19,10 @@ public class User {
     private String username;
     private String bio;
     private String profilePicture;
-    private String createdAt;
+
+    // timestamp for when the account was created
+    @Column(name = "created_at", updatable = false, insertable = false)
+    private java.sql.Timestamp createdAt;
 
     // password must not be empty
     @Column(nullable = false)
@@ -27,7 +30,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_followers",
+            name = "followers",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id")
     )
@@ -62,8 +65,12 @@ public class User {
     public String getProfilePicture() { return profilePicture; }
     public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
 
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    // Get account creation date in human-readable format
+    public String getCreatedAt() {
+        if (createdAt == null) return null;
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createdAt);
+    }
+    public void setCreatedAt(java.sql.Timestamp createdAt) { this.createdAt = createdAt; }
 
     public List<User> getFollowers() { return followers; }
     public void setFollowers(List<User> followers) { this.followers = followers; }

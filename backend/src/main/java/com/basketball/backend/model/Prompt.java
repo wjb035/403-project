@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "prompts")
+@Table(name = "daily_prompts")
 public class Prompt {
 
     // auto-generated incremental ID for each prompt stored in db

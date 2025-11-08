@@ -3,6 +3,8 @@ package com.basketball.backend.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+
+// Composite primary key
 public class DrawingLikeId implements Serializable {
     private Long userId;
     private Long drawingId;
