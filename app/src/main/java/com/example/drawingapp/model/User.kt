@@ -1,4 +1,4 @@
-package com.example.drawingapp.loginscreen.model
+package com.example.drawingapp.model
 
 // This file represents all of the data returned by the Spring Boot API
 data class User (

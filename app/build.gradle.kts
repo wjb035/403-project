@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.navigation.compose)
+    implementation("androidx.compose.runtime:runtime:1.5.0")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
@@ -83,6 +84,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     // optional - RxJava2 support
     implementation("androidx.datastore:datastore-preferences-rxjava2:1.0.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // optional - RxJava3 support
     implementation("androidx.datastore:datastore-preferences-rxjava3:1.0.0")
@@ -94,8 +96,7 @@ dependencies {
 
     // FIREBASE
     implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-storage:22.0.1")
-
+    implementation("com.google.firebase:firebase-auth:22.1.1")
+    implementation("com.google.firebase:firebase-storage:21.0.1")
 
 }

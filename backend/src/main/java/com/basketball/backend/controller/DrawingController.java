@@ -5,11 +5,19 @@ import com.basketball.backend.model.DrawingLike;
 import com.basketball.backend.model.User;
 import com.basketball.backend.repository.DrawingRepository;
 import com.basketball.backend.repository.DrawingLikeRepository;
+import com.basketball.backend.repository.UserRepository;
+import com.google.firebase.cloud.StorageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,6 +28,9 @@ public class DrawingController {
     private DrawingRepository drawingRepository;
     @Autowired
     private DrawingLikeRepository drawingLikeRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
     // GET all drawings for leaderboard (sorted by likes or timestamp)
     @GetMapping("/leaderboard/likes")
@@ -32,15 +43,13 @@ public class DrawingController {
         return drawingRepository.findAllByOrderByCreatedAtDesc();
     }
 
-
-
-    // POST /api/users/register
     // stores a drawing to the user's profile
     @PostMapping("/storeDrawing")
     public Drawing storeDrawing(@RequestBody Drawing drawing) {
         return drawingRepository.save(drawing);
     }
 
+    // Image liking functionality
     @PostMapping("/like/{drawingId}/{userId}")
     public Drawing likeDrawing(@PathVariable Long drawingId, @PathVariable Long userId) {
         Drawing drawing = drawingRepository.findById(drawingId).orElse(null);
@@ -64,6 +73,7 @@ public class DrawingController {
         return drawingRepository.save(drawing);
     }
 
+    // Image disliking functionality
     @PostMapping("/unlike/{drawingId}/{userId}")
     public Drawing unlikeDrawing(@PathVariable Long drawingId, @PathVariable Long userId) {
         Drawing drawing = drawingRepository.findById(drawingId).orElse(null);
@@ -78,5 +88,44 @@ public class DrawingController {
         // Update the cached count
         drawing.setLikesCount(Math.max(0, drawing.getLikesCount() - 1));
         return drawingRepository.save(drawing);
+    }
+
+    // Upload drawings to database
+    @PostMapping("/uploadDrawing")
+    public ResponseEntity<Drawing> uploadDrawing(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("userId") Long userId
+    ) {
+        try {
+            // Upload to firebase
+            Bucket bucket = StorageClient.getInstance().bucket();
+            String blobName = "drawings/" + file.getOriginalFilename();
+            Blob blob = bucket.create(blobName, file.getBytes(), file.getContentType());
+
+            // Generate download url
+            String encodedName = URLEncoder.encode(blobName, StandardCharsets.UTF_8);
+            String downloadUrl = String.format(
+                    "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+                    bucket.getName(),
+                    encodedName
+            );
+
+            // Get user
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Save drawing
+            Drawing drawing = new Drawing();
+            drawing.setUser(user);
+            drawing.setImageUrl(downloadUrl);
+            drawing.setLikesCount(0);
+
+            Drawing savedDrawing = drawingRepository.save(drawing);
+
+            return ResponseEntity.ok(savedDrawing);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

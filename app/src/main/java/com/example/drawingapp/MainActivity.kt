@@ -26,16 +26,19 @@ import com.example.drawingapp.loginscreen.LoginScreen
 import com.example.drawingapp.loginscreen.RegisterScreen
 import com.example.drawingapp.ui.search.SearchScreen
 import com.example.drawingapp.ui.settings.SettingsScreen
-
+import com.example.drawingapp.model.UserViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 class MainActivity : ComponentActivity() {
+
     @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             WhiteboardSimTheme {
                 val navController = rememberNavController()
+                val userViewModel: UserViewModel = viewModel()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route
                 fun getIconForItem(item: String): Int {
@@ -100,7 +103,7 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen(navCon=navController)
                         }
                         composable(route="gallery"){
-                            leaderboard(navCon=navController)
+                            leaderboard(navCon=navController, userViewModel = userViewModel)
                         }
 
                         // not part of the nav bar
@@ -111,10 +114,10 @@ class MainActivity : ComponentActivity() {
                             whiteboard(navCon=navController)
                         }
                         composable(route = "login"){
-                            LoginScreen(navCon =navController)
+                            LoginScreen(navCon =navController, userViewModel = userViewModel)
                         }
                         composable(route = "register"){
-                            RegisterScreen(navCon=navController)
+                            RegisterScreen(navCon=navController, userViewModel = userViewModel)
                         }
                         composable(route = "search") {
                             SearchScreen(navCon=navController)

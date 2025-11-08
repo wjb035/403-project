@@ -22,7 +22,7 @@ public class SchedulerConfig(private val promptController: PromptController) {
 
     // demo mode
     private val demoMode = true
-    private val demoIntervalSeconds = 10L
+    private val demoIntervalSeconds = 60L
 
     init { scheduleNextPrompt() }
 

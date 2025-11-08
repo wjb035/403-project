@@ -18,14 +18,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.drawingapp.R
-import com.example.drawingapp.loginscreen.model.User
-import com.example.drawingapp.loginscreen.network.ApiService
-import com.example.drawingapp.loginscreen.network.RetrofitClient
+import com.example.drawingapp.model.User
+import com.example.drawingapp.network.UserApi
+import com.example.drawingapp.network.RetrofitInstance
 import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import androidx.compose.material3.OutlinedTextField
+import com.example.drawingapp.model.UserViewModel
+
+
 /**
  * RegisterActivity
  * ----------------
@@ -34,15 +37,13 @@ import androidx.compose.material3.OutlinedTextField
  */
 
 @Composable
-fun RegisterScreen(navCon: NavController) {
+fun RegisterScreen(navCon: NavController, userViewModel: UserViewModel) {
     WhiteboardSimTheme {
         // Declare UI components
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         val context = LocalContext.current
-
-        val api = remember { RetrofitClient.getClient().create(ApiService::class.java) }
 
         // Background
         Box(
@@ -111,9 +112,11 @@ fun RegisterScreen(navCon: NavController) {
                         return@Button
                     }
                     val user = User(username = username, password = password)
-                    api.register(user).enqueue(object : Callback<User> {
+                    RetrofitInstance.userApi.register(user).enqueue(object : Callback<User> {
                         override fun onResponse(call: Call<User>, response: Response<User>) {
                             if (response.isSuccessful) {
+                                val registeredUser = response.body()!!
+                                userViewModel.setUser(registeredUser)
                                 Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT)
                                     .show()
                                 navCon.navigate("splash") {
@@ -158,5 +161,9 @@ fun RegisterScreen(navCon: NavController) {
 @Preview
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreen(navCon = NavController(LocalContext.current))
+    val userViewModel = remember { UserViewModel() }
+    RegisterScreen(
+        navCon = NavController(LocalContext.current),
+        userViewModel = userViewModel
+    )
 }

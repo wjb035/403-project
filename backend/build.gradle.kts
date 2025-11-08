@@ -26,6 +26,7 @@ repositories {
 	maven {
         url = uri("https://jitpack.io")
     }
+    google()
 }
 
 dependencies {
@@ -40,6 +41,9 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3")
 	implementation("net.sf.extjwnl:extjwnl:2.0.5")
 	implementation("net.sf.extjwnl:extjwnl-data-wn31:1.2")
+
+    //firebase
+    implementation("com.google.firebase:firebase-admin:9.2.0")
 }
 
 tasks.withType<Test> {

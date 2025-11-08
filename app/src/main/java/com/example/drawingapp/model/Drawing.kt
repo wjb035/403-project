@@ -1,6 +1,6 @@
 package com.example.drawingapp.model
 
-data class User(
+data class MinimalUser(
     val id: Long,
     val username: String
 )

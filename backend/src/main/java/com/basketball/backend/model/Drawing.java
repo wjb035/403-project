@@ -21,7 +21,6 @@ public class Drawing {
 
     // fields
     private String imageUrl;
-    private String description;
     private int likesCount;
 
     // unix timestamp for when the drawing was created
@@ -38,8 +37,6 @@ public class Drawing {
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 
     public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
     public int getLikesCount() { return likesCount; }
