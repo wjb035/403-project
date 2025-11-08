@@ -27,10 +27,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,25 +50,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
-import com.example.drawingapp.ui.settings.SettingsScreen
-import com.example.drawingapp.MainActivity
-import androidx.navigation.compose.composable
-import com.example.drawingapp.ui.search.SearchScreen
+import com.example.drawingapp.model.UserViewModel
 
 @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 @Composable
-fun ProfileScreen(navCon: NavController) {
+fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
-            name = "Example Name",
+            name = userViewModel.getUser()?.username ?: "Unable to get name",
             modifier = Modifier
                 .padding(10.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
-        ProfileSection()
+        ProfileSection(userViewModel)
         Spacer(modifier = Modifier.height(25.dp))
         ButtonSection(modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(25.dp))
@@ -116,6 +109,7 @@ fun TopBar(
 
 @Composable
 fun ProfileSection(
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -132,10 +126,10 @@ fun ProfileSection(
                     .weight(3f)
             )
             Spacer(modifier = Modifier.width(16.dp))
-            StatSection(modifier = Modifier.weight(7f))
+            StatSection(userViewModel, modifier = Modifier.weight(7f))
         }
         ProfileDescription(
-            description = "This is an example description for viewing purposes"
+            description = userViewModel.getUser()?.bio ?: "Unable to get bio"
         )
     }
 }
@@ -161,14 +155,15 @@ fun RoundImage(
 }
 
 @Composable
-fun StatSection(modifier: Modifier = Modifier) {
+fun StatSection(userViewModel: UserViewModel,
+                modifier: Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
     ) {
         ProfileStat(numberText = "6", text = "Posts")
-        ProfileStat(numberText = "100K", text = "Followers")
+        ProfileStat(numberText = userViewModel.getUser()?.followers?.size.toString(), text = "Followers")
     }
 }
 
