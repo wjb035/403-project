@@ -43,7 +43,7 @@ dependencies {
 	implementation("net.sf.extjwnl:extjwnl-data-wn31:1.2")
 
     //firebase
-    implementation("com.google.firebase:firebase-admin:9.2.0")
+    implementation("com.google.firebase:firebase-admin:9.7.0")
 }
 
 tasks.withType<Test> {

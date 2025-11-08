@@ -397,15 +397,23 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 Button(onClick = { isEraser = true }) {
                     Text("Eraser")
                 }
-                Button(onClick = {
+                Button(enabled = currentUser?.id != null, onClick = {
                     coroutineScope.launch {
                         // SAVE TO DEVICE FIRST
                         val localUri = saveDrawing(context, lines, true, prompt)
                         if (localUri != null) {
                             try {
                                 // UPLOAD TO BACKEND which uploads to firebase!
+                                // Read the saved file
                                 val inputStream = context.contentResolver.openInputStream(localUri)
                                 val tempFile = File(context.cacheDir, "upload.png")
+
+                                // Copy URI data into temp file
+                                inputStream?.use { input ->
+                                    tempFile.outputStream().use { output ->
+                                        input.copyTo(output)
+                                    }
+                                }
 
                                 // Convert File to MultipartBody.Part
                                 val requestFile = tempFile.asRequestBody("image/png".toMediaTypeOrNull())
@@ -418,6 +426,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                                 val response = RetrofitInstance.drawingApi.uploadDrawing(multipartBody, userIdRequest)
                                 Toast.makeText(context, "Uploaded to Firebase!", Toast.LENGTH_SHORT).show()
                             } catch (e: Exception) {
+                                Log.e("Upload", "Failed uploading drawing", e)
                                 Toast.makeText(
                                     context,
                                     "Failed to upload drawing",

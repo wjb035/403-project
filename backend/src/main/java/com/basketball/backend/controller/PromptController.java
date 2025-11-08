@@ -21,8 +21,7 @@ public class PromptController {
     @Autowired
     private BackendWordFetcher backendWordFetcher;
 
-    // GENERATE A DAILY PROMPT every day at midnight
-    @Scheduled(cron = "0 0 0 * * *")
+    // LOGIC for generating the prompt, used by scheduler
     public void generateDailyPrompt() {
         String promptText = backendWordFetcher.getPrompt();
         Prompt prompt = new Prompt();
