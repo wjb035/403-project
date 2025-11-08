@@ -1185,203 +1185,219 @@ drawing_id</ColNames>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="320" parent="301" name="image_url">
+    <column id="320" parent="301" name="prompt_id">
+      <NotNull>1</NotNull>
       <Position>3</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <column id="321" parent="301" name="image_url">
+      <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="321" parent="301" name="likes_count">
+    <column id="322" parent="301" name="likes_count">
       <DefaultExpression>0</DefaultExpression>
-      <Position>4</Position>
+      <Position>5</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="322" parent="301" name="created_at">
+    <column id="323" parent="301" name="created_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
-      <Position>5</Position>
+      <Position>6</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <foreign-key id="323" parent="301" name="drawings_ibfk_1">
-      <ColNames>user_id</ColNames>
-      <RefColNames>id</RefColNames>
-      <RefTableName>users</RefTableName>
-    </foreign-key>
-    <index id="324" parent="301" name="PRIMARY">
-      <ColNames>id</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="325" parent="301" name="user_id">
-      <ColNames>user_id</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="326" parent="301" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="327" parent="302" name="user_id">
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>bigint|0s</StoredType>
-    </column>
-    <column id="328" parent="302" name="follower_id">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StoredType>bigint|0s</StoredType>
-    </column>
-    <foreign-key id="329" parent="302" name="followers_ibfk_1">
+    <foreign-key id="324" parent="301" name="drawings_ibfk_1">
       <ColNames>user_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="330" parent="302" name="followers_ibfk_2">
+    <foreign-key id="325" parent="301" name="drawings_ibfk_2">
+      <ColNames>prompt_id</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <RefColNames>id</RefColNames>
+      <RefTableName>daily_prompts</RefTableName>
+    </foreign-key>
+    <index id="326" parent="301" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="327" parent="301" name="user_id">
+      <ColNames>user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="328" parent="301" name="prompt_id">
+      <ColNames>prompt_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="329" parent="301" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="330" parent="302" name="user_id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <column id="331" parent="302" name="follower_id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>bigint|0s</StoredType>
+    </column>
+    <foreign-key id="332" parent="302" name="followers_ibfk_1">
+      <ColNames>user_id</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <foreign-key id="333" parent="302" name="followers_ibfk_2">
       <ColNames>follower_id</ColNames>
       <OnDelete>cascade</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <index id="331" parent="302" name="PRIMARY">
+    <index id="334" parent="302" name="PRIMARY">
       <ColNames>user_id
 follower_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="332" parent="302" name="follower_id">
+    <index id="335" parent="302" name="follower_id">
       <ColNames>follower_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="333" parent="302" name="PRIMARY">
+    <key id="336" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="334" parent="303" name="id">
+    <column id="337" parent="303" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="335" parent="303" name="user_id">
+    <column id="338" parent="303" name="user_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="336" parent="303" name="theme">
+    <column id="339" parent="303" name="theme">
       <DefaultExpression>&apos;light&apos;</DefaultExpression>
       <Position>3</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="337" parent="303" name="notifications_enabled">
+    <column id="340" parent="303" name="notifications_enabled">
       <DefaultExpression>1</DefaultExpression>
       <Position>4</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <column id="338" parent="303" name="most_recent_follower_id">
+    <column id="341" parent="303" name="most_recent_follower_id">
       <Position>5</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="339" parent="303" name="most_recent_follower_post_id">
+    <column id="342" parent="303" name="most_recent_follower_post_id">
       <Position>6</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="340" parent="303" name="most_recent_liked_post_id">
+    <column id="343" parent="303" name="most_recent_liked_post_id">
       <Position>7</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <foreign-key id="341" parent="303" name="user_settings_ibfk_1">
+    <foreign-key id="344" parent="303" name="user_settings_ibfk_1">
       <ColNames>user_id</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="342" parent="303" name="user_settings_ibfk_2">
+    <foreign-key id="345" parent="303" name="user_settings_ibfk_2">
       <ColNames>most_recent_follower_id</ColNames>
       <OnDelete>set-null</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>users</RefTableName>
     </foreign-key>
-    <foreign-key id="343" parent="303" name="user_settings_ibfk_3">
+    <foreign-key id="346" parent="303" name="user_settings_ibfk_3">
       <ColNames>most_recent_follower_post_id</ColNames>
       <OnDelete>set-null</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>drawings</RefTableName>
     </foreign-key>
-    <foreign-key id="344" parent="303" name="user_settings_ibfk_4">
+    <foreign-key id="347" parent="303" name="user_settings_ibfk_4">
       <ColNames>most_recent_liked_post_id</ColNames>
       <OnDelete>set-null</OnDelete>
       <RefColNames>id</RefColNames>
       <RefTableName>drawings</RefTableName>
     </foreign-key>
-    <index id="345" parent="303" name="PRIMARY">
+    <index id="348" parent="303" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="346" parent="303" name="user_id">
+    <index id="349" parent="303" name="user_id">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="347" parent="303" name="most_recent_follower_id">
+    <index id="350" parent="303" name="most_recent_follower_id">
       <ColNames>most_recent_follower_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="348" parent="303" name="most_recent_follower_post_id">
+    <index id="351" parent="303" name="most_recent_follower_post_id">
       <ColNames>most_recent_follower_post_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="349" parent="303" name="most_recent_liked_post_id">
+    <index id="352" parent="303" name="most_recent_liked_post_id">
       <ColNames>most_recent_liked_post_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="350" parent="303" name="PRIMARY">
+    <key id="353" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="351" parent="304" name="id">
+    <column id="354" parent="304" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="352" parent="304" name="username">
+    <column id="355" parent="304" name="username">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="353" parent="304" name="password">
+    <column id="356" parent="304" name="password">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="354" parent="304" name="bio">
+    <column id="357" parent="304" name="bio">
       <Position>4</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="355" parent="304" name="profile_picture">
+    <column id="358" parent="304" name="profile_picture">
       <Position>5</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="356" parent="304" name="created_at">
+    <column id="359" parent="304" name="created_at">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>6</Position>
       <StoredType>timestamp|0s</StoredType>
     </column>
-    <index id="357" parent="304" name="PRIMARY">
+    <index id="360" parent="304" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="358" parent="304" name="username">
+    <index id="361" parent="304" name="username">
       <ColNames>username</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="359" parent="304" name="PRIMARY">
+    <key id="362" parent="304" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="360" parent="304" name="username">
+    <key id="363" parent="304" name="username">
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
   </database-model>

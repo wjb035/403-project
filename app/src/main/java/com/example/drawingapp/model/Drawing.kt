@@ -8,7 +8,8 @@ data class Drawing(
     val id: Long,
     val imageUrl: String,
     var likesCount: Int,
-    val user: User
+    val user: User,
+    val prompt: Prompt
 )
 
 

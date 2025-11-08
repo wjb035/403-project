@@ -18,6 +18,11 @@ public class Drawing {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Connect the drawing to the current prompt
+    @ManyToOne
+    @JoinColumn(name = "prompt_id", nullable = false)
+    private Prompt prompt;
+
     // fields
     private String imageUrl;
     private int likesCount;
@@ -32,6 +37,9 @@ public class Drawing {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public Prompt getPrompt() { return prompt; }
+    public void setPrompt(Prompt prompt) { this.prompt = prompt; }
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }

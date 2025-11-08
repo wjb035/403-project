@@ -6,6 +6,8 @@ import com.basketball.backend.model.User;
 import com.basketball.backend.repository.DrawingRepository;
 import com.basketball.backend.repository.DrawingLikeRepository;
 import com.basketball.backend.repository.UserRepository;
+import com.basketball.backend.repository.PromptRepository;
+import com.basketball.backend.model.Prompt;
 import com.google.firebase.cloud.StorageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,8 @@ public class DrawingController {
     private DrawingLikeRepository drawingLikeRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PromptRepository promptRepository;
 
 
     // GET all drawings for leaderboard (sorted by likes or timestamp)
@@ -94,7 +98,8 @@ public class DrawingController {
     @PostMapping("/uploadDrawing")
     public ResponseEntity<Drawing> uploadDrawing(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("userId") Long userId
+            @RequestParam("userId") Long userId,
+            @RequestParam("promptId") Long promptId
     ) {
         try {
             // Upload to firebase
@@ -112,6 +117,7 @@ public class DrawingController {
 
             // Get user
             User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+            Prompt prompt = promptRepository.findById(promptId).orElseThrow(() -> new RuntimeException("Prompt not found"));
 
             // Save drawing
             Drawing drawing = new Drawing();

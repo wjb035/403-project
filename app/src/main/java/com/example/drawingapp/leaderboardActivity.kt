@@ -125,13 +125,15 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             tabs.forEach { tab ->
+                val isSelected = selectedTab == tab
                 Button(
+
                     onClick = { selectedTab = tab },
-                    colors = if (selectedTab == tab) {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    } else {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface)
-                    }
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                        contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
                 ) {
                     Text(tab)
                 }
@@ -226,18 +228,33 @@ fun DrawingDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(400.dp)
+                        .clip(RectangleShape),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+                // Show the prompt
+                Text(
+                    text = "Prompt: ${drawing.prompt.text}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                // Show likes
                 Text("Likes: ${drawing.likesCount}", style = MaterialTheme.typography.bodyLarge)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = { onLike(drawing.id) }) { Text("Like") }
+                    Button(onClick = { onUnlike(drawing.id) }) { Text("Unlike") }
+                }
             }
         },
-        confirmButton = {
-            Button(onClick = { onLike(drawing.id) }) { Text("Like") }
-        },
-        dismissButton = {
-            Button(onClick = { onUnlike(drawing.id) }) { Text("Unlike") }
-        }
-
+        confirmButton = {},
+        dismissButton = {}
     )
 
 }

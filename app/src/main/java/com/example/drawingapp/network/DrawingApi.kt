@@ -20,14 +20,14 @@ interface DrawingApi {
     suspend fun getLeaderboardByNew(): List<Drawing>
 
     // Like a drawing
-    @POST("api/users/like/{drawingId}")
+    @POST("api/users/like/{drawingId}/{userId}")
     suspend fun likeDrawing(
         @Path("drawingId") drawingId: Long,
         @Path("userId") userId: Long
     ): Drawing
 
     // Dislike a drawing
-    @POST("api/users/unlike/{drawingId}")
+    @POST("api/users/unlike/{drawingId}/{userId}")
     suspend fun unlikeDrawing(
         @Path("drawingId") drawingId: Long,
         @Path("userId") userId: Long
@@ -39,5 +39,6 @@ interface DrawingApi {
     suspend fun uploadDrawing(
         @Part file: MultipartBody.Part,
         @Part("userId") userId: RequestBody,
+        @Part("promptId") promptId: RequestBody
     ): Drawing
 }
