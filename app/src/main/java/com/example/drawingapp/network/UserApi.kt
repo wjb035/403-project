@@ -6,7 +6,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 
-interface DrawingApi {
+interface UserApi {
     @GET("api/users/leaderboard")
     suspend fun getLeaderboard(): List<Drawing>
 

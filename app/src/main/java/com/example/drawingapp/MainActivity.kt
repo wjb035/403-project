@@ -26,19 +26,16 @@ import com.example.drawingapp.loginscreen.LoginScreen
 import com.example.drawingapp.loginscreen.RegisterScreen
 import com.example.drawingapp.ui.search.SearchScreen
 import com.example.drawingapp.ui.settings.SettingsScreen
-import com.example.drawingapp.model.UserViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 
 class MainActivity : ComponentActivity() {
-
     @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             WhiteboardSimTheme {
                 val navController = rememberNavController()
-                val userViewModel: UserViewModel = viewModel()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route
                 fun getIconForItem(item: String): Int {
@@ -90,7 +87,7 @@ class MainActivity : ComponentActivity() {
                 ) {innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "login",
+                        startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
                     ){
                         composable(route = "splash") {
@@ -103,7 +100,7 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen(navCon=navController)
                         }
                         composable(route="gallery"){
-                            leaderboard(navCon=navController, userViewModel = userViewModel)
+                            leaderboard(navCon=navController)
                         }
 
                         // not part of the nav bar
@@ -111,13 +108,13 @@ class MainActivity : ComponentActivity() {
                             PromptScreen(navCon=navController)
                         }
                         composable(route = "whiteboard"){
-                            whiteboard(navCon=navController, userViewModel = userViewModel)
+                            whiteboard(navCon=navController)
                         }
                         composable(route = "login"){
-                            LoginScreen(navCon =navController, userViewModel = userViewModel)
+                            LoginScreen(navCon =navController)
                         }
                         composable(route = "register"){
-                            RegisterScreen(navCon=navController, userViewModel = userViewModel)
+                            RegisterScreen(navCon=navController)
                         }
                         composable(route = "search") {
                             SearchScreen(navCon=navController)

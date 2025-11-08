@@ -21,6 +21,7 @@ object RetrofitInstance {
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
+
             .build()
     }
 
@@ -28,6 +29,6 @@ object RetrofitInstance {
 
     val userApi: UserApi by lazy { retrofit.create(UserApi::class.java) }
     val promptApi: PromptApi by lazy { retrofit.create(PromptApi::class.java) }
-
+    val CanDrawApi: canDrawApi by lazy {retrofit.create(canDrawApi::class.java)}
 
 }

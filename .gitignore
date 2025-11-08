@@ -13,5 +13,3 @@
 .externalNativeBuild
 .cxx
 local.properties
-/app/google-services.json
-/backend/src/main/resources/firebase/quickdraw-6323f-firebase-adminsdk-fbsvc-1e3258a6ef.json

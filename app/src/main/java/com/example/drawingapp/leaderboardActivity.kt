@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,190 +51,127 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlin.collections.map
 import kotlin.collections.plus
-import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.material3.ButtonDefaults
-
-import android.widget.Toast
-import androidx.compose.material3.CircularProgressIndicator
-import com.example.drawingapp.model.Drawing
-import com.example.drawingapp.model.User
-import com.example.drawingapp.network.DrawingApi
-import com.example.drawingapp.network.RetrofitInstance
-import retrofit2.Retrofit
-import com.example.drawingapp.model.UserViewModel
-
 
 @Composable
-fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
-    val currentUser = userViewModel.currentUser
-    if (currentUser == null) {
-        Text("Loading user...")
-        return
-    }
+fun leaderboard(navCon: NavController) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.white_layer),
+            contentDescription = "background",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize()
+        )
 
+        var showDialog by remember { mutableStateOf(false) }
+        var postID by remember { mutableStateOf("NULL") }
 
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    // DRAWING STORAGE SETUP
-    var drawings by remember { mutableStateOf<List<Drawing>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedDrawing by remember { mutableStateOf<Drawing?>(null) }
-
-    // Tabs
-    var selectedTab by remember { mutableStateOf("Popular") }
-    val tabs =  listOf("Popular", "New", "Following")
-
-    // Load drwaings based on the tab thats selected
-    fun loadDrawings(){
-        scope.launch {
-            isLoading = true
-            try {
-                drawings = when (selectedTab) {
-                    "Popular" -> RetrofitInstance.drawingApi.getLeaderboardByLikes()
-                    "New" -> RetrofitInstance.drawingApi.getLeaderboardByNew()
-                    "Following" -> RetrofitInstance.drawingApi.getLeaderboardByLikes()
-                    else -> emptyList()
-                }
-                // Following tab filter
-                if (selectedTab == "Following") {
-                    val followingIds = currentUser.following.map { it.id }
-                    drawings = drawings.filter { it.user.id in followingIds }
-                }
-            } catch (e: Exception) {
-                Toast.makeText(context, "Couldn't load drawings", Toast.LENGTH_LONG).show()
-            } finally {
-                isLoading = false
-            }
+        if (showDialog) {
+            AlertDialog(onDismiss = { showDialog = false }, postID)
         }
-    }
 
-    // Fetch drawings for the first time
-    LaunchedEffect(selectedTab) {
-        loadDrawings()
-    }
+        Column(modifier = Modifier.fillMaxSize()
+           ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 50.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navCon.navigate("home") }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.back_arrow),
+                        contentDescription = "Back to Home",
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
+                Text(
+                    text = "Gallery",
+                    modifier = Modifier,                    fontSize = 30.sp
+                )
+                Spacer(modifier = Modifier.size(48.dp)) // Balances the back button
+            }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // Tabs Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            tabs.forEach { tab ->
-                Button(
-                    onClick = { selectedTab = tab },
-                    colors = if (selectedTab == tab) {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    } else {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface)
-                    }
+            val list = listOf(
+                "A", "B", "C", "D"
+            ) + ((0..100).map { it.toString() })
+            Column(modifier = Modifier.fillMaxSize()
+                .offset(0.dp, 50.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(tab)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Loading indicator
-        if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn {
-                items(drawings) { drawing ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                        onClick = {
-                            selectedDrawing = drawing
-                            showDialog = true
-                        }
-                    ) {
-                        AsyncImage(
-                            model = drawing.imageUrl,
-                            contentDescription = "Drawing Image",
-                            modifier = Modifier.fillMaxWidth().height(250.dp)
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("By: ${drawing.user.username}", fontSize = 16.sp)
-                            Text("Likes: ${drawing.likesCount}", fontSize = 16.sp)
-                        }
+                    LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
+                        items(items = list, itemContent = { item ->
+                            IconButton(
+                                onClick = {
+                                    showDialog = true
+                                    postID = item
+                                },
+                                modifier = Modifier
+                                    .width(400.dp)
+                                    .height(300.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image),
+                                    contentDescription = "Image",
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        })
                     }
                 }
-            }
-        }
-
-        // Detailed drawing view
-        if (showDialog && selectedDrawing != null) {
-            DrawingDialog(
-                drawing = selectedDrawing!!,
-                onDismiss = { showDialog = false },
-                onLike = { drawingId ->
-                    scope.launch {
-                        try {
-                            val updated = RetrofitInstance.drawingApi.likeDrawing(drawingId, currentUser.id!!)
-                            drawings = drawings.map { if (it.id == drawingId) updated else it }
-                            selectedDrawing = updated
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Failed to like drawing", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }, onUnlike = { drawingId ->
-                    scope.launch {
-                        try {
-                            val updated = RetrofitInstance.drawingApi.unlikeDrawing(drawingId, currentUser.id!!)
-                            drawings = drawings.map { if (it.id == drawingId) updated else it }
-                            selectedDrawing = updated
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Failed to unlike drawing", Toast.LENGTH_SHORT).show()
-                        }
-                    }
                 }
-            )
         }
     }
 }
 
 
-// DRAWING DIALOGUE SCREEN, FUNCTIONAL NOW
-
+//Primarily boilerplate code for displaying the necessary items- the image is currently kept as an IconButton and the like button
+// has not been linked to any actual database functionality yet.
 @Composable
-fun DrawingDialog(
-    drawing: Drawing,
-    onDismiss: () -> Unit,
-    onLike: (drawingId: Long) -> Unit,
-    onUnlike: (drawingId: Long) -> Unit
-){
+fun AlertDialog(onDismiss: ()-> Unit, postID: String){
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Posted by ${drawing.user.username}") },
+        confirmButton = {},
         modifier = Modifier.height(700.dp),
 
-        text = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                AsyncImage(
-                    model = drawing.imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(400.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("Likes: ${drawing.likesCount}", style = MaterialTheme.typography.bodyLarge)
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                //Text(text = "Post Details")
+
             }
         },
-        confirmButton = {
-            Button(onClick = { onLike(drawing.id) }) { Text("Like") }
-        },
-        dismissButton = {
-            Button(onClick = { onUnlike(drawing.id) }) { Text("Unlike") }
+
+        text = {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Text(text="POST ID: " + postID, fontSize = 25.sp, color = MaterialTheme.colorScheme.onSurface)
+
+                IconButton(onClick = {},
+                    modifier = Modifier
+                        .width(400.dp).height(500.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.image),
+                        contentDescription = "Image",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                    Button(
+                    onClick = {},
+                    modifier = Modifier.width(180.dp)
+                ){
+                    Text(text="Like Post?")
+                }
+            }
         }
 
     )
@@ -245,7 +181,6 @@ fun DrawingDialog(
 @Preview
 @Composable
 fun leaderboardPreview(){
-    val userViewModel = remember { UserViewModel() }
-    leaderboard(navCon = rememberNavController(), userViewModel)
+    leaderboard(navCon = rememberNavController())
 }
 

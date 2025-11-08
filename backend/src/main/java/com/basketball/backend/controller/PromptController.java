@@ -8,7 +8,6 @@ import com.basketball.backend.prompter.BackendWordFetcher;
 import org.springframework.scheduling.annotation.Scheduled;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/prompts")
@@ -31,6 +30,7 @@ public class PromptController {
         promptRepository.save(prompt);
     }
 
+
     // GET TODAYS PROMPT
     @GetMapping("/today")
     public Prompt getTodayPrompt() {
@@ -42,4 +42,8 @@ public class PromptController {
     public String testPrompt() {
         return backendWordFetcher.getPrompt();
     }
+
+    //GET STATUS OF LOCK
+    @GetMapping("/time")
+    public Boolean getTime() {return true;}
 }

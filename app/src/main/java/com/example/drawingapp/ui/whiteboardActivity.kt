@@ -81,25 +81,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
 import com.example.drawingapp.network.RetrofitInstance
-import com.example.drawingapp.model.UserViewModel
 import com.example.drawingapp.network.PromptApi
+import com.example.drawingapp.network.canDrawApi
 import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
-import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.ByteArrayOutputStream
-import java.io.File
+
 
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "drawData")
 
 @Composable
-fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
-    val currentUser = userViewModel.currentUser
+fun whiteboard(navCon: NavController) {
     WhiteboardSimTheme {
     val context = LocalContext.current.applicationContext
     val coroutineScope = rememberCoroutineScope()
@@ -118,7 +111,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     val drawData = booleanPreferencesKey("drawData")
     var displayReady by remember { mutableStateOf(true) }
     var uriDay by remember { mutableStateOf<Uri?>(null) }
-    var getUriFromCanvas by remember { mutableStateOf(false) }
+
     /*val drawFlow: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             // No type safety.
@@ -142,9 +135,14 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     LaunchedEffect(Unit) {
         try {
             val response = RetrofitInstance.promptApi.getTodaysPrompt()
+            //if (!response){
+                //prompt = "dude check out this trollf ace"
+            //}
             prompt = response.text
         } catch (e: Exception) {
             prompt = "Failed to load prompt."
+            //prompt = e.toString()
+            println(e.toString())
             Log.e("Whiteboard", "Error fetching prompt", e)
         }
     }
@@ -167,7 +165,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                         countdown = "Time's up!"
                         canDraw = false
                         coroutineScope.launch {
-                            incrementCounter(context, drawData, false)
+                            incrementCounter(context, drawData, true)
                         }
 
                         showButton = true
@@ -295,7 +293,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     }
                     AnimatedVisibility(
 
-                        visible = displayReady
+                        visible = !displayReady
 
                     ) {
                         Button(onClick = {
@@ -309,7 +307,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     }
                     Button(onClick = {
                         coroutineScope.launch {
-                            incrementCounter(context, drawData, true)
+                            incrementCounter(context, drawData, false)
 
                         }
                     }) {
@@ -399,38 +397,15 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 }
                 Button(onClick = {
                     coroutineScope.launch {
-                        // SAVE TO DEVICE FIRST
-                        val localUri = saveDrawing(context, lines, true, prompt)
-                        if (localUri != null) {
-                            try {
-                                // UPLOAD TO BACKEND which uploads to firebase!
-                                val inputStream = context.contentResolver.openInputStream(localUri)
-                                val tempFile = File(context.cacheDir, "upload.png")
-
-                                // Convert File to MultipartBody.Part
-                                val requestFile = tempFile.asRequestBody("image/png".toMediaTypeOrNull())
-                                val multipartBody = MultipartBody.Part.createFormData("file", tempFile.name, requestFile)
-
-                                // Get user ID
-                                val userIdRequest = currentUser!!.id!!.toString().toRequestBody("text/plain".toMediaType())
-
-                                // Upload with retrofit
-                                val response = RetrofitInstance.drawingApi.uploadDrawing(multipartBody, userIdRequest)
-                                Toast.makeText(context, "Uploaded to Firebase!", Toast.LENGTH_SHORT).show()
-                            } catch (e: Exception) {
-                                Toast.makeText(
-                                    context,
-                                    "Failed to upload drawing",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
+                        saveDrawing(context, lines, true, prompt)
                     }
                 }) {
                     Text("Save")
                 }
             }
         }
+
+
 
 
         // The star of the show- the canvas.
@@ -473,7 +448,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                                     // If the user is within bounds, and is able to draw (timer hasn't expired,
                                     // the line is applied.
 
-                                    if (!endOBS && !startOBS && canDraw && isDailyDrawing) {
+                                    if (!endOBS && !startOBS && !canDraw && isDailyDrawing) {
                                         val line = Line(
                                             start = change.position - dragAmount,
 
@@ -622,8 +597,7 @@ suspend fun saveDrawing(context: Context, lines: List<Line>,downloadToDevice: Bo
 @Preview
 @Composable
 fun whiteboardPreview(){
-    val userViewModel = remember { UserViewModel() }
-    whiteboard(rememberNavController(), userViewModel)
+    whiteboard(rememberNavController())
 }
 
 

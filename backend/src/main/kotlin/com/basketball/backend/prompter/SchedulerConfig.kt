@@ -22,7 +22,7 @@ public class SchedulerConfig(private val promptController: PromptController) {
 
     // demo mode
     private val demoMode = true
-    private val demoIntervalSeconds = 60L
+    private val demoIntervalSeconds = 10L
 
     init { scheduleNextPrompt() }
 
@@ -37,7 +37,8 @@ public class SchedulerConfig(private val promptController: PromptController) {
 
             val nextRun = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, randomHour)
-                set(Calendar.MINUTE, randomMinute)
+                //set(Calendar.MINUTE, randomMinute)
+                set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 0)
                 if (timeInMillis <= now.timeInMillis) {
                     add(Calendar.DAY_OF_YEAR, 1)

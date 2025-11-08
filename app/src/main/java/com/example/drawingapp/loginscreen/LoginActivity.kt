@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -17,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,14 +37,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.drawingapp.R
-import com.example.drawingapp.model.User
-import com.example.drawingapp.network.UserApi
-import com.example.drawingapp.network.RetrofitInstance
+import com.example.drawingapp.loginscreen.model.User
+import com.example.drawingapp.loginscreen.network.ApiService
+import com.example.drawingapp.loginscreen.network.RetrofitClient
 import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.drawingapp.model.UserViewModel
 
 
 /**
@@ -51,12 +54,15 @@ import com.example.drawingapp.model.UserViewModel
  */
 
 @Composable
-fun LoginScreen(navCon: NavController, userViewModel: UserViewModel) {
+fun LoginScreen(navCon: NavController) {
     WhiteboardSimTheme {
         // declare UI components
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         val context = LocalContext.current
+
+        // Create a retrofit API client from RetrofitClient class
+        val api = remember { RetrofitClient.getClient().create(ApiService::class.java) }
 
         // Background
         Box(
@@ -112,11 +118,9 @@ fun LoginScreen(navCon: NavController, userViewModel: UserViewModel) {
             Button(
                 onClick = {
                     val credentials = mapOf("username" to username, "password" to password)
-                    RetrofitInstance.userApi.login(credentials).enqueue(object : Callback<User> {
+                    api.login(credentials).enqueue(object : Callback<User> {
                         override fun onResponse(call: Call<User>, response: Response<User>) {
                             if (response.isSuccessful) {
-                                val loggedInUser = response.body()!!
-                                userViewModel.setUser(loggedInUser)
                                 Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT)
                                     .show()
                                 navCon.navigate("splash") {
@@ -160,10 +164,7 @@ fun LoginScreen(navCon: NavController, userViewModel: UserViewModel) {
 @Preview
 @Composable
 fun LoginScreenPreview() {
-
-    val userViewModel = remember { UserViewModel() }
     LoginScreen(
         navCon = NavController(LocalContext.current),
-        userViewModel = userViewModel
     )
 }

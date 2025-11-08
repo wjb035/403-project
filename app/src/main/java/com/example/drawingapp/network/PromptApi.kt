@@ -6,4 +6,6 @@ import com.example.drawingapp.model.Prompt
 interface PromptApi {
     @GET("api/prompts/today")
     suspend fun getTodaysPrompt(): Prompt
+
+
 }
