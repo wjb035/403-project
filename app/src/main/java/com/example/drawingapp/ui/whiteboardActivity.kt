@@ -101,7 +101,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "dr
 fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     val currentUser = userViewModel.currentUser
     WhiteboardSimTheme {
-    val context = LocalContext.current.applicationContext
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     // Variables that we use later on, including the current pen color, the list of lines (on the canvas),
@@ -139,10 +139,12 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     }
     // PROMPT LOAD HERE
     var prompt by remember { mutableStateOf("Loading daily prompt...") }
+        var promptId by remember { mutableStateOf<Long?>(null) }
     LaunchedEffect(Unit) {
         try {
             val response = RetrofitInstance.promptApi.getTodaysPrompt()
             prompt = response.text
+            promptId = response.id
         } catch (e: Exception) {
             prompt = "Failed to load prompt."
             Log.e("Whiteboard", "Error fetching prompt", e)
@@ -422,9 +424,12 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                                 // Get user ID
                                 val userIdRequest = currentUser!!.id!!.toString().toRequestBody("text/plain".toMediaType())
 
+                                // Get prompt ID
+                                val promptIdRequest = promptId.toString().toRequestBody("text/plain".toMediaType())
                                 // Upload with retrofit
-                                val response = RetrofitInstance.drawingApi.uploadDrawing(multipartBody, userIdRequest)
+                                val response = RetrofitInstance.drawingApi.uploadDrawing(multipartBody, userIdRequest, promptIdRequest)
                                 Toast.makeText(context, "Uploaded to Firebase!", Toast.LENGTH_SHORT).show()
+
                             } catch (e: Exception) {
                                 Log.e("Upload", "Failed uploading drawing", e)
                                 Toast.makeText(

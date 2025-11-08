@@ -234,7 +234,7 @@ fun DrawingDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 // Show the prompt
                 Text(
-                    text = "Prompt: ${drawing.prompt.text}",
+                    text = " ${drawing.prompt.text}",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )

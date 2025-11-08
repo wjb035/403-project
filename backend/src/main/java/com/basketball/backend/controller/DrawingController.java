@@ -20,6 +20,7 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -104,15 +105,15 @@ public class DrawingController {
         try {
             // Upload to firebase
             Bucket bucket = StorageClient.getInstance().bucket();
-            String blobName = "drawings/" + file.getOriginalFilename();
-            Blob blob = bucket.create(blobName, file.getBytes(), file.getContentType());
+            // Generate a unique name for each upload
+            String uniqueName = "drawings/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();;
+            Blob blob = bucket.create(uniqueName, file.getBytes(), file.getContentType());
 
             // Generate download url
-            String encodedName = URLEncoder.encode(blobName, StandardCharsets.UTF_8);
             String downloadUrl = String.format(
                     "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
                     bucket.getName(),
-                    encodedName
+                    URLEncoder.encode(uniqueName, StandardCharsets.UTF_8)
             );
 
             // Get user
@@ -122,6 +123,7 @@ public class DrawingController {
             // Save drawing
             Drawing drawing = new Drawing();
             drawing.setUser(user);
+            drawing.setPrompt(prompt);
             drawing.setImageUrl(downloadUrl);
             drawing.setLikesCount(0);
 
