@@ -73,10 +73,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import android.util.Log
+import android.view.RoundedCorner
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.draw.innerShadow
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
@@ -255,7 +265,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 80.dp)
+                .offset(x = 0.dp, y = 100.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -327,7 +337,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 110.dp)
+                .offset(x = 0.dp, y = 160.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -338,7 +348,8 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 Text(
                     text = countdown,
                     modifier = Modifier,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
 
             }
@@ -355,7 +366,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
 
-                .offset(x = 0.dp, y = -50.dp)
+                .offset(x = 0.dp, y = -150.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -378,13 +389,15 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
+                .padding(all = 0.dp)
                 .align(Alignment.BottomCenter)
+                .offset(x = 0.dp, y = (-50).dp)
 
         ) {
             Row(
                 Modifier.fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(horizontal = 40.dp)
+                    .height(100.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -393,13 +406,31 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     brushSize, onSizeSelected = { selectedSize -> brushSize = selectedSize },
                     isEraser = isEraser, keepMode = { keepEraserMode -> isEraser = keepEraserMode })
 
-                Button(onClick = { lines.clear() }) {
-                    Text("Reset")
+                IconButton(
+                    onClick = { isEraser = true },
+                    modifier = Modifier.size(70.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.eraser),
+                        contentDescription = "Toggle Eraser",
+                        modifier = Modifier.size(60.dp)
+                    )
                 }
-                Button(onClick = { isEraser = true }) {
-                    Text("Eraser")
+
+                IconButton(
+                    onClick = { lines.clear() },
+                    modifier = Modifier.size(70.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.reset),
+                        contentDescription = "Clear Canvas",
+                        modifier = Modifier.size(60.dp)
+                    )
                 }
-                Button(enabled = currentUser?.id != null, onClick = {
+
+                IconButton(
+                    enabled = currentUser?.id != null,
+                    onClick = {
                     coroutineScope.launch {
                         // SAVE TO DEVICE FIRST
                         val localUri = saveDrawing(context, lines, true, prompt)
@@ -439,9 +470,14 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                                 ).show()
                             }
                         }
-                    }
-                }) {
-                    Text("Save")
+                    } },
+                modifier = Modifier.size(70.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.save),
+                        contentDescription = "Save to Device",
+                        modifier = Modifier.size(60.dp)
+                    )
                 }
             }
         }
@@ -462,8 +498,9 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 ) {
                     Canvas(
                         modifier = Modifier.size(width = 400.dp, height = 400.dp)
+
+                            .border(BorderStroke(8.dp, Color.LightGray), shape = RoundedCornerShape(0.dp))
                             .background(Color.White)
-                            .border(6.dp, Color.Black)
                             .pointerInput(true) {
                                 val drawFlow: Flow<Boolean> = context.dataStore.data
                                     .map { settings ->
@@ -549,9 +586,12 @@ fun selectColor(onColorSelected: (Color) -> Unit){
     )
     Row{
         colorMap.forEach { (color,name) ->
-            Box(Modifier.size(25.dp)
-                .background(color,CircleShape)
-                .padding(20.dp)
+            Box(Modifier
+                .size(50.dp)
+                .border(BorderStroke(8.dp, Color.White), shape = RoundedCornerShape(16.dp))
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp), clip = false)
+                .background(color,RoundedCornerShape(16.dp))
+                .padding(30.dp)
                 .clickable{
                     onColorSelected(color)
                     Toast.makeText(context,name,Toast.LENGTH_SHORT).show()
@@ -577,7 +617,9 @@ fun BrushSizeSelector(currentSize: Float, onSizeSelected: (Float) -> Unit, isEra
             },
             textStyle = TextStyle(fontSize = 16.sp),
             modifier = Modifier.width(60.dp)
-                .background(Color.LightGray, CircleShape)
+                .border(BorderStroke(8.dp, Color.White), shape = RoundedCornerShape(16.dp))
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp), clip = false)
+                .background(Color.White, CircleShape)
                 .padding(8.dp)
         )
         Text(" px", Modifier.align(Alignment.CenterVertically))
