@@ -82,10 +82,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.draw.innerShadow
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -146,13 +153,13 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     val drawData = booleanPreferencesKey("drawData")
     var displayReady by remember { mutableStateOf(true) }
     var uriDay by remember { mutableStateOf<Uri?>(null) }
-    var getUriFromCanvas by remember { mutableStateOf(false) }
-    /*val drawFlow: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            // No type safety.
-            preferences[drawData] ?: true
-        }
-*/
+        var getUriFromCanvas by remember { mutableStateOf(false) }
+        /*val drawFlow: Flow<Boolean> = context.dataStore.data
+            .map { preferences ->
+                // No type safety.
+                preferences[drawData] ?: true
+            }
+    */
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -283,21 +290,24 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 100.dp)
+                .offset(x = 0.dp, y = 120.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = prompt,
-                    modifier = Modifier,
-                    fontSize = 22.sp
+            Text(
+                text = prompt,
+                color = MaterialTheme.colorScheme.primary,
+                style = TextStyle(
+                    shadow = Shadow(color = Color.White, offset = Offset.Zero, blurRadius = 3f),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 32.sp,
+                    drawStyle = Stroke(width = 2f, miter = 2f),
                 )
-
-            }
+            ) }
         }
     }
 
@@ -318,11 +328,11 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Button(onClick = {
-                        navCon.navigate("home")
-                    }) {
-                        Text("home")
-                    }
+                    //  Button(onClick = {
+                    //    navCon.navigate("home")
+                    //  }) {
+                    //    Text("home")
+                    //  }
                     AnimatedVisibility(
 
                         visible = displayReady
@@ -344,7 +354,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
 
                         }
                     }) {
-                        Text("Reset?")
+                        Text("(Debug) Reset?")
                     }
 
 
@@ -356,7 +366,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 160.dp)
+                .offset(x = 0.dp, y = 180.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -514,16 +524,14 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 .offset(0.dp, 0.dp),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                //modifier = Modifier.align(Center)
-            ) {
+            Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Canvas(
                         modifier = Modifier.size(width = 400.dp, height = 400.dp)
 
-                            .border(BorderStroke(8.dp, Color.LightGray), shape = RoundedCornerShape(0.dp))
+                            .border(BorderStroke(8.dp, Color.Black), shape = RoundedCornerShape(0.dp))
                             .background(Color.White)
                             .pointerInput(true) {
                                 val drawFlow: Flow<Boolean> = context.dataStore.data
