@@ -157,8 +157,8 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     var uriDay by remember { mutableStateOf<Uri?>(null) }
         var getUriFromCanvas by remember { mutableStateOf(false) }
         var expanded by remember { mutableStateOf(false) }
-
-
+    var userIsDrawing by remember {mutableStateOf(false)}
+    var CountDown by remember {mutableStateOf<CountDownTimer?>(null)}
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -185,7 +185,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     LaunchedEffect(userHasStarted) {
         if (userHasStarted) {
             if (remainingTime > 0) {
-                object : CountDownTimer(remainingTime, 1000) {
+                CountDown = object : CountDownTimer(remainingTime, 1000) {
 
                     override fun onTick(millisUntilFinished: Long) {
                         remainingTime = millisUntilFinished
@@ -206,7 +206,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                         coroutineScope.launch {
                             incrementCounter(context, drawData, false)
                         }
-
+                        userIsDrawing = false
                         showButton = true
 
                     }
@@ -342,12 +342,32 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                             ok?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
                             if (!userHasStarted) {
                                 userHasStarted = true
+                                userIsDrawing = true
                                 canDraw = true
                             }
                         }) {
                             Text("Ready?")
                         }
                     }
+
+                    AnimatedVisibility(
+                        visible = userIsDrawing
+                    ){
+                        Button(onClick = {
+                            CountDown?.cancel()
+                            countdown = "Time's up!"
+                            canDraw = false
+                            coroutineScope.launch {
+                                incrementCounter(context, drawData, false)
+                            }
+                            userIsDrawing = false
+                            showButton = true
+                        }) {
+                            Text("I'm done!")
+                        }
+                    }
+
+
                     Button(onClick = {
                         coroutineScope.launch {
                             incrementCounter(context, drawData, true)
