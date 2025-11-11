@@ -81,6 +81,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
@@ -146,7 +148,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     var brushSize by remember { mutableFloatStateOf(10f) }
     var isEraser by remember { mutableStateOf(false) }
     var canDraw by remember { mutableStateOf(false) }
-    var remainingTime by remember { mutableStateOf(10000L) }
+    var remainingTime by remember { mutableStateOf(300000L) }
     var countdown by remember { mutableStateOf("Press \"Ready\" when you're ready to draw!") }
     var userHasStarted by remember { mutableStateOf(false) }
     var showButton by remember { mutableStateOf(false) }
@@ -154,21 +156,14 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     var displayReady by remember { mutableStateOf(true) }
     var uriDay by remember { mutableStateOf<Uri?>(null) }
         var getUriFromCanvas by remember { mutableStateOf(false) }
-        /*val drawFlow: Flow<Boolean> = context.dataStore.data
-            .map { preferences ->
-                // No type safety.
-                preferences[drawData] ?: true
-            }
-    */
+        var expanded by remember { mutableStateOf(false) }
+
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (!granted) {
-            Toast.makeText(
-                context,
-                "This app requires permission for something",
-                Toast.LENGTH_SHORT
-            ).show()
+
 
         }
     }
@@ -413,6 +408,8 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
             }
         }
     }
+
+
     // Box that contains the pen size changer, the reset canvas button, and the save button.
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -431,9 +428,45 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                BrushSizeSelector(
-                    brushSize, onSizeSelected = { selectedSize -> brushSize = selectedSize },
-                    isEraser = isEraser, keepMode = { keepEraserMode -> isEraser = keepEraserMode })
+                Button(onClick = { expanded = true }) {
+                    Text("Brush Thickness")
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Small") },
+                        onClick = {
+                            brushSize = 5f
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Medium") },
+                        onClick = {
+                            brushSize = 10f
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Large") },
+                        onClick = {
+                            brushSize = 20f
+                            expanded = false
+
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("X-Large") },
+                        onClick = {
+                            brushSize = 35f
+                            expanded = false
+
+                        }
+                    )
+                }
 
                 IconButton(
                     onClick = {
@@ -505,12 +538,12 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                             }
                         }
                     } },
-                modifier = Modifier.size(70.dp)
+                modifier = Modifier.size(75.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.save),
                         contentDescription = "Save to Device",
-                        modifier = Modifier.size(60.dp)
+                        modifier = Modifier.size(70.dp)
                     )
                 }
             }
@@ -638,29 +671,6 @@ fun selectColor(onColorSelected: (Color) -> Unit){
     }
 }
 
-@Composable
-fun BrushSizeSelector(currentSize: Float, onSizeSelected: (Float) -> Unit, isEraser: Boolean, keepMode: (Boolean) -> Unit){
-    var sizeText by remember { mutableStateOf(currentSize.toString())}
-
-    Row{
-        BasicTextField(
-            value=sizeText,
-            onValueChange = {
-                sizeText = it
-                val newSize = it.toFloatOrNull() ?: currentSize
-                onSizeSelected(newSize)
-                keepMode(isEraser)
-            },
-            textStyle = TextStyle(fontSize = 16.sp),
-            modifier = Modifier.width(60.dp)
-                .border(BorderStroke(8.dp, Color.White), shape = RoundedCornerShape(16.dp))
-                .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp), clip = false)
-                .background(Color.White, CircleShape)
-                .padding(8.dp)
-        )
-        Text(" px", Modifier.align(Alignment.CenterVertically))
-    }
-}
 
 data class Line(val start: Offset, val end: Offset, val color: Color, val strokeWidth: Float = 10f)
 
