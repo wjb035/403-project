@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                 ) {innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "login",
+                        startDestination = "whiteboard",
                         modifier = Modifier.padding(innerPadding)
                     ){
                         composable(route = "splash") {

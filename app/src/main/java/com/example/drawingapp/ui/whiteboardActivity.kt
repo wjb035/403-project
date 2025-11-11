@@ -8,6 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.health.connect.datatypes.Device
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
@@ -114,6 +116,22 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+
+        var soundPool: SoundPool? by remember { mutableStateOf(null) }
+        var reload: Int? by remember { mutableStateOf(null) }
+        var ok: Int? by remember { mutableStateOf(null) }
+        LaunchedEffect(context) {
+            val attributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .build()
+            soundPool = SoundPool.Builder()
+                .setMaxStreams(1)
+                .setAudioAttributes(attributes)
+                .build()
+            reload = soundPool?.load(context, R.raw.deck_ui_default_activation, 1)
+            ok = soundPool?.load(context, R.raw.ok, 1)
+        }
     // Variables that we use later on, including the current pen color, the list of lines (on the canvas),
     // the size of the brush, whether we're erasing or not, and whether we can draw or not.
     var currentColor by remember { mutableStateOf(Color.Black) }
@@ -311,6 +329,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
 
                     ) {
                         Button(onClick = {
+                            ok?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
                             if (!userHasStarted) {
                                 userHasStarted = true
                                 canDraw = true
@@ -366,7 +385,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
 
-                .offset(x = 0.dp, y = -150.dp)
+                .offset(x = 0.dp, y = (-80).dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -391,7 +410,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 .fillMaxWidth()
                 .padding(all = 0.dp)
                 .align(Alignment.BottomCenter)
-                .offset(x = 0.dp, y = (-50).dp)
+                //.offset(x = 0.dp, y = (-50).dp)
 
         ) {
             Row(
@@ -407,7 +426,9 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     isEraser = isEraser, keepMode = { keepEraserMode -> isEraser = keepEraserMode })
 
                 IconButton(
-                    onClick = { isEraser = true },
+                    onClick = {
+                        ok?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
+                        isEraser = true },
                     modifier = Modifier.size(70.dp)
                 ) {
                     Image(
@@ -418,7 +439,9 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 }
 
                 IconButton(
-                    onClick = { lines.clear() },
+                    onClick = {
+                        ok?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
+                        lines.clear() },
                     modifier = Modifier.size(70.dp)
                 ) {
                     Image(
@@ -431,6 +454,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 IconButton(
                     enabled = currentUser?.id != null,
                     onClick = {
+                        ok?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
                     coroutineScope.launch {
                         // SAVE TO DEVICE FIRST
                         val localUri = saveDrawing(context, lines, true, prompt)
@@ -577,17 +601,19 @@ fun selectColor(onColorSelected: (Color) -> Unit){
     // user what they switched to.
     val colorMap = mapOf(
         Color.Red to "Red",
+        Color(0xFFFFA500) to "Orange",
         Color.Yellow to "Yellow",
         Color.Green to "Green",
         Color.Blue to "Blue",
         Color.Cyan to "Cyan",
+        Color(0xFFB200ED) to "Purple",
         Color.Magenta to "Magenta",
         Color.Black to "Black"
     )
     Row{
         colorMap.forEach { (color,name) ->
             Box(Modifier
-                .size(50.dp)
+                .size(40.dp)
                 .border(BorderStroke(8.dp, Color.White), shape = RoundedCornerShape(16.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp), clip = false)
                 .background(color,RoundedCornerShape(16.dp))
