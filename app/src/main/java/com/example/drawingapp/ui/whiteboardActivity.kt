@@ -290,7 +290,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 120.dp)
+                .offset(x = 0.dp, y = 80.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -366,7 +366,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 180.dp)
+                .offset(x = 0.dp, y = 120.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -616,13 +616,15 @@ fun selectColor(onColorSelected: (Color) -> Unit){
         Color.Cyan to "Cyan",
         Color(0xFFB200ED) to "Purple",
         Color.Magenta to "Magenta",
+        Color(0xFF573434) to "Brown",
+        Color(0xFF4F4F4F) to "Grey",
         Color.Black to "Black"
     )
     Row{
         colorMap.forEach { (color,name) ->
             Box(Modifier
-                .size(40.dp)
-                .border(BorderStroke(8.dp, Color.White), shape = RoundedCornerShape(16.dp))
+                .size(35.dp)
+                .border(BorderStroke(8.dp, Color.White), shape = RoundedCornerShape(14.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp), clip = false)
                 .background(color,RoundedCornerShape(16.dp))
                 .padding(30.dp)
