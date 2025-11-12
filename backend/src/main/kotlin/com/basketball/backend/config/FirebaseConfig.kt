@@ -15,7 +15,7 @@ class FirebaseConfig {
 
     @Bean
     fun firebaseApp(): FirebaseApp {
-        val serviceAccountPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        val serviceAccountFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
             ?: throw RuntimeException("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
 
         val serviceAccount = FileInputStream(serviceAccountFilePath)
