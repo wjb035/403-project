@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM gradle:8.3.3-jdk17 AS build
+FROM gradle:8.3.3-jdk17-slim AS build
 
 # Set working directory
 WORKDIR /app

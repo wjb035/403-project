@@ -15,7 +15,9 @@ class FirebaseConfig {
 
     @Bean
     fun firebaseApp(): FirebaseApp {
-        val serviceAccountFilePath = "C:\\Users\\luigi\\Desktop\\Drawingapp Credentials\\firebase\\quickdraw-6323f-firebase-adminsdk-fbsvc-fc69d2028c.json"
+        val serviceAccountPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+            ?: throw RuntimeException("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+
         val serviceAccount = FileInputStream(serviceAccountFilePath)
 
         val options = FirebaseOptions.builder()
