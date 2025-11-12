@@ -166,7 +166,7 @@ fun ProfileSection(
                 .padding(horizontal = 20.dp)
         ) {
             RoundImage(
-                imageUrl = userViewModel.getUser()!!.profilePicture,
+                imageUrl = user!!.profilePicture,
                 modifier = Modifier
                     .size(100.dp)
                     .weight(3f)
@@ -182,12 +182,10 @@ fun ProfileSection(
 
 @Composable
 fun RoundImage(
-    image: String,
+    imageUrl: String?,
     modifier: Modifier = Modifier
 ) {
-    AsyncImage(
-        model = image,
-        contentDescription = null,
+    Box(
         modifier = modifier
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .border(3.dp, Color(0xFF6200EE), CircleShape)
