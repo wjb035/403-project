@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,15 +61,20 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
     var selectedPost by remember { mutableStateOf<Drawing?>(null) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var isLoading by remember { mutableStateOf(true) }
+
 
     // FETCH DRAWIGNS!
     LaunchedEffect(currentUser?.id) {
+        isLoading = true
         currentUser?.id?.let { userId ->
             scope.launch {
                 try {
                     posts = RetrofitInstance.drawingApi.getUserDrawings(userId)
                 } catch (e: Exception) {
                     Toast.makeText(context, "Failed to load drawings", Toast.LENGTH_SHORT).show()
+                } finally {
+                    isLoading = false
                 }
             }
         }
@@ -83,60 +90,83 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
         ProfileSection(currentUser)
         Spacer(modifier = Modifier.height(25.dp))
 
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { clip = false }
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { clip = false }
-            ) {
-                items(posts.size) { index ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                        onClick = {
-                            selectedPost = posts[index]
+            // Loading indicator
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer { clip = false }
+                ) {
+                    items(posts.size) { index ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                            onClick = {
+                                selectedPost = posts[index]
+                            }
+                        ) {
+                            Box{
+                                AsyncImage(
+                                    model = posts[index].imageUrl,
+                                    contentDescription = "Drawing Image",
+                                    modifier = Modifier.fillMaxWidth().height(250.dp)
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .background(Color.Black.copy(alpha = 0.5f), shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        text = "${posts[index].likesCount} ❤️",
+                                        color = Color.White,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
                         }
-                    ) {
-                        AsyncImage(
-                            model = posts[index].imageUrl,
-                            contentDescription = "Drawing Image",
-                            modifier = Modifier.fillMaxWidth().height(250.dp)
-                        )
                     }
                 }
-            }
 
-            if (selectedPost != null) {
-                PhotoClick(
-                    post = selectedPost!!,
-                    onDismiss = { selectedPost = null },
-                    onLike = { drawingId ->
-                        scope.launch {
-                            try {
-                                val updated = RetrofitInstance.drawingApi.likeDrawing(drawingId, currentUser!!.id!!)
-                                posts = posts.map { if (it.id == drawingId) updated else it }
-                                selectedPost = updated
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "Failed to like drawing", Toast.LENGTH_SHORT).show()
+                if (selectedPost != null) {
+                    PhotoClick(
+                        post = selectedPost!!,
+                        onDismiss = { selectedPost = null },
+                        onLike = { drawingId ->
+                            scope.launch {
+                                try {
+                                    val updated = RetrofitInstance.drawingApi.likeDrawing(drawingId, currentUser!!.id!!)
+                                    posts = posts.map { if (it.id == drawingId) updated else it }
+                                    selectedPost = updated
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Already liked drawing", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        onUnlike = { drawingId ->
+                            scope.launch {
+                                try {
+                                    val updated = RetrofitInstance.drawingApi.unlikeDrawing(drawingId, currentUser!!.id!!)
+                                    posts = posts.map { if (it.id == drawingId) updated else it }
+                                    selectedPost = updated
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Can't unlike drawing", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                    },
-                    onUnlike = { drawingId ->
-                        scope.launch {
-                            try {
-                                val updated = RetrofitInstance.drawingApi.unlikeDrawing(drawingId, currentUser!!.id!!)
-                                posts = posts.map { if (it.id == drawingId) updated else it }
-                                selectedPost = updated
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "Failed to unlike drawing", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
 
@@ -295,11 +325,10 @@ fun PhotoClick(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .wrapContentSize(unbounded = true)
     ) {
         Box(modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
+            .background(Color.Black.copy(alpha = 0.6f))
             .clickable(onClick = onDismiss)
         )
 
@@ -309,16 +338,44 @@ fun PhotoClick(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(400.dp)
+                .align(Alignment.Center)
                 .clip(RectangleShape),
             contentScale = ContentScale.Fit
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        // Like count inside a background box
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 16.dp)
+                .background(Color.Black.copy(alpha = 0.75f), shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            Button(onClick = { onLike(post.id) }) { Text("Like") }
-            Button(onClick = { onUnlike(post.id) }) { Text("Unlike") }
+            Text(
+                text = "${post.likesCount} ❤️",
+                color = Color.White,
+                fontSize = 24.sp
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
+        ) {
+            Button(onClick = { onLike(post.id) }) { Text("❤️") }
+            Button(onClick = { onUnlike(post.id) }) { Text("\uD83D\uDDA4") }
+        }
+
+        Button(
+            onClick = onDismiss,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp)
+        ) {
+            Text("Back")
         }
 
     }
