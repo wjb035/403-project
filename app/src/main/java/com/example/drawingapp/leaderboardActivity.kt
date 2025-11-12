@@ -272,7 +272,8 @@ fun DrawingDialog(
     onLike: (drawingId: Long) -> Unit,
     onUnlike: (drawingId: Long) -> Unit,
     soundPool: SoundPool?,
-    ok: Int?
+    ok: Int?,
+    back: Int?
 ){
     AlertDialog(
         onDismissRequest = onDismiss,
