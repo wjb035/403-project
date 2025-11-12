@@ -225,6 +225,7 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
                     }
                     showDialog = false },
                 onLike = {
+
                     drawingId ->
                     scope.launch {
                         try {
@@ -235,7 +236,8 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
                             Toast.makeText(context, "Failed to like drawing", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }, onUnlike = { drawingId ->
+                }, onUnlike = {
+                    drawingId ->
                     scope.launch {
                         try {
                             val updated = RetrofitInstance.drawingApi.unlikeDrawing(drawingId, currentUser.id!!)
@@ -245,7 +247,10 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
                             Toast.makeText(context, "Failed to unlike drawing", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
+                },
+                soundPool,
+                ok,
+                back
             )
         }
     }
@@ -253,13 +258,21 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
 
 
 // DRAWING DIALOGUE SCREEN, FUNCTIONAL NOW
-
+/*
+* var soundPool: SoundPool? by remember { mutableStateOf(null) }
+    var ok: Int? by remember { mutableStateOf(null) }
+    var click: Int? by remember { mutableStateOf(null) }
+    var back: Int? by remember { mutableStateOf(null) }
+    var save: Int? by remember { mutableStateOf(null) }
+* */
 @Composable
 fun DrawingDialog(
     drawing: Drawing,
     onDismiss: () -> Unit,
     onLike: (drawingId: Long) -> Unit,
-    onUnlike: (drawingId: Long) -> Unit
+    onUnlike: (drawingId: Long) -> Unit,
+    soundPool: SoundPool?,
+    ok: Int?
 ){
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -295,9 +308,21 @@ fun DrawingDialog(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Button(onClick = {
-
+                        ok?.let {
+                            soundPool?.play(
+                                it, 1f, 1f,
+                                0, 0, 1f
+                            )
+                        }
                         onLike(drawing.id) }) { Text("Like") }
-                    Button(onClick = { onUnlike(drawing.id) }) { Text("Unlike") }
+                    Button(onClick = {
+                        back?.let {
+                            soundPool?.play(
+                                it, 1f, 1f,
+                                0, 0, 1f
+                            )
+                        }
+                        onUnlike(drawing.id) }) { Text("Unlike") }
                 }
             }
         },
