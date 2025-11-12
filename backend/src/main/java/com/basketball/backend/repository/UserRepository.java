@@ -13,5 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // custom method to find a user by their username, one of them is not case sensitive for users
     User findByUsername(String username);
+    Optional<User> findById(Long id);
     List<User> findByUsernameContainingIgnoreCase(String username);
+
 }

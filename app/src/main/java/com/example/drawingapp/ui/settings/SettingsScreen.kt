@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -114,7 +115,8 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(15.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
             // Display profile picture if available
             if (!profilePictureUrl.isNullOrEmpty()) {
@@ -122,16 +124,14 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
                     model = profilePictureUrl,
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(120.dp)
-                        .padding(16.dp)
+                        .size(160.dp)
                         .clip(CircleShape)
-                        .border(3.dp, Color(0xFF6200EE), CircleShape)
+                        .border(4.dp, Color(0xFF6200EE), CircleShape)
                 )
             } else {
                 Box(
                     modifier = Modifier
-                        .size(120.dp)
-                        .padding(16.dp)
+                        .size(160.dp)
                         .clip(CircleShape)
                         .background(Color.Gray),
                     contentAlignment = Alignment.Center
@@ -139,12 +139,17 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
                     Text("No Image!", color = Color.White)
                 }
             }
+
+            // Button for changing picture
+            Button(
+                onClick = { launcher.launch("image/*") },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+            ) {
+                Text("Change Profile Picture")
+            }
         }
 
-        // Button for changing picture
-        Button(onClick = { launcher.launch("image/*") }) {
-            Text("Change Profile Picture")
-        }
+
     }
 
     // MAIN SETTINGS COLUMN
@@ -241,33 +246,54 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
 fun EditBar(userViewModel: UserViewModel) {
     var newname by remember { mutableStateOf("") }
     var newbio by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Column {
         OutlinedTextField(
             value = newname,
-            onValueChange = { newvalue ->
-                newname = newvalue
-            },
+            onValueChange = {  newname = it  },
             label = { Text("Edit Name") },
-            placeholder = { Text("Your name here...") }
+            placeholder = { Text("Your name here...") },
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
             value = newbio,
-            onValueChange = { newvalue ->
-                newbio = newvalue
-            },
+            onValueChange = { newbio = it },
             label = { Text("Edit Bio") },
-            placeholder = { Text("Your bio here...") }
+            placeholder = { Text("Your bio here...") },
+            modifier = Modifier.fillMaxWidth()
 
         )
         Spacer(modifier = Modifier.height(5.dp))
         Button (onClick = {
-            if (newname != "") {
-                userViewModel.currentUser!!.username = newname
-            }
-            if (newbio != "") {
-                userViewModel.currentUser!!.bio = newbio
+            val userId = userViewModel.currentUser?.id
+            if (userId != null) {
+                val updates = mutableMapOf<String, String>()
+                if (newname.isNotBlank()) updates["username"] = newname
+                if (newbio.isNotBlank()) updates["bio"] = newbio
+
+                if (updates.isNotEmpty()) {
+                    scope.launch(Dispatchers.IO) {
+                        try {
+                            val updatedUser = RetrofitInstance.userApi.patchUser(userId, updates)
+                            withContext(Dispatchers.Main) {
+                                userViewModel.setUser(updatedUser)
+                                Toast.makeText(context, "Profile updated!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    "Update failed: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
             }
 
         } ) {

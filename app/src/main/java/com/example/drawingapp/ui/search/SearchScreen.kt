@@ -86,6 +86,9 @@ fun SearchScreen(navCon: NavController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)
+                                .clickable {
+                                    selectedUser = user
+                                }
                         )
                         HorizontalDivider()
                     }
@@ -97,6 +100,10 @@ fun SearchScreen(navCon: NavController) {
             MiniProfilePopup(
                 user = user,
                 onDismiss = { selectedUser = null },
+                onOpenProfile = { u ->
+                    selectedUser = null
+                    navCon.navigate("otherProfile/${u.id}")
+                }
             )
         }
     }
@@ -107,6 +114,7 @@ fun SearchScreen(navCon: NavController) {
 fun MiniProfilePopup(
     user: User,
     onDismiss: () -> Unit,
+    onOpenProfile: (User) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -138,10 +146,13 @@ fun MiniProfilePopup(
                 Text(text = user.bio ?: "No bio available", color = Color.Gray)
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-
-                TextButton(onClick = onDismiss) {
-                    Text("Close", color = Color.Red)
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Close", color = Color.Red)
+                    }
+                    TextButton(onClick = { onOpenProfile(user) }) {
+                        Text("View Profile", color = Color(0xFF6200EE))
+                    }
                 }
             }
         }

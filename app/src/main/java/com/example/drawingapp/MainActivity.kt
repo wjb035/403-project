@@ -36,6 +36,9 @@ import com.example.drawingapp.ui.search.SearchScreen
 import com.example.drawingapp.ui.settings.SettingsScreen
 import com.example.drawingapp.model.UserViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.drawingapp.ui.profile.OtherProfileScreenWrapper
 
 
 class MainActivity : ComponentActivity() {
@@ -155,6 +158,14 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "settings") {
                             SettingsScreen(navCon=navController, userViewModel = userViewModel)
+                        }
+
+                        composable(
+                            route = "otherProfile/{userId}",
+                            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+                        ) { backStackEntry ->
+                            val userId = backStackEntry.arguments?.getLong("userId") ?: 0L
+                            OtherProfileScreenWrapper(navController = navController, userViewModel = userViewModel, userId = userId)
                         }
 
                     }

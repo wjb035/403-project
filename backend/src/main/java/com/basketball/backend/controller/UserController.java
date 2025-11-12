@@ -39,6 +39,30 @@ public class UserController {
         return userRepository.findByUsernameContainingIgnoreCase(query);
     }
 
+    // get a user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // PATCH MAPPING FOR UBIO CHANGES
+    public ResponseEntity<User> patchUser(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> updates
+    ) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) return ResponseEntity.notFound().build();
+        User user = optionalUser.get();
+
+        if (updates.containsKey("username")) user.setUsername(updates.get("username"));
+        if (updates.containsKey("bio")) user.setBio(updates.get("bio"));
+
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
+    }
+
     // POST /api/users/register
     // registers a new user if the username does not already exist
     @PostMapping("/register")

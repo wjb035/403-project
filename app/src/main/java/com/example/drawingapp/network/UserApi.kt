@@ -8,6 +8,7 @@ import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -35,6 +36,13 @@ public interface UserApi {
     @GET("/api/users/search/}")
     suspend fun searchUsers(@Query("query") query: String): List<User>
 
+    // For changing bio and user
+    @PATCH("users/{id}")
+    suspend fun patchUser(
+        @Path("id") id: Long,
+        @Body updates: Map<String, String>
+    ): User
+
     // Upload a pfp
     @Multipart
     @POST("/api/users/uploadProfilePicture")
@@ -42,6 +50,12 @@ public interface UserApi {
         @Part file: MultipartBody.Part,
         @Part("userId") userId: RequestBody,
     ): User
+
+
+
+    // Get user by ID
+    @GET("api/users/{id}")
+    suspend fun getUserById(@Path("id") userId: Long): User
 
     @POST("api/users/follow/{username}")
     suspend fun followUser(@Path("username") username: String, @Body user: User) : User
