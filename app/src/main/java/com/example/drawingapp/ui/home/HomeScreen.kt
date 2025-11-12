@@ -4,9 +4,11 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.SoundPool
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -28,6 +31,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
+import com.example.drawingapp.network.RetrofitInstance
 import com.example.drawingapp.ui.dataStore
 import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +46,8 @@ fun HomeScreen(navCon: NavController) {
     val drawData = booleanPreferencesKey("drawData")
     var soundPool: SoundPool? by remember { mutableStateOf(null) }
     var soundId: Int? by remember { mutableStateOf(null) }
+    var checked by remember {mutableStateOf(true)}
+    var canDraw by remember { mutableStateOf(false) }
     var hasDrawn by remember {mutableStateOf(true)}
     LaunchedEffect(context) {
         val attributes = AudioAttributes.Builder()
@@ -54,21 +60,18 @@ fun HomeScreen(navCon: NavController) {
             .build()
         soundId = soundPool?.load(context, R.raw.deck_ui_default_activation, 1)
     }
-    /*
-    *
+
+
     LaunchedEffect(checked){
         //incrementCounter(context, drawData, false)
         canDraw = RetrofitInstance.CanDrawApi.getTime()
         checked = false
     }
-    *
-    *
 
-    *
     LaunchedEffect(Unit) {
         hasDrawn = HasDrawn(context, drawData)
     }
-    * */
+
     WhiteboardSimTheme {
         Box(
             modifier = Modifier
@@ -84,12 +87,11 @@ fun HomeScreen(navCon: NavController) {
 
             Button(onClick = {
                 soundId?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
-                //if (canDraw && !hasDrawn) {
-                navCon.navigate("whiteboard")
-                //}
+                if (canDraw && hasDrawn) {
+                    navCon.navigate("whiteboard")
+                }
 
-                /*
-                *
+
                  else {
                     checked = true
                     Toast.makeText(
@@ -98,10 +100,27 @@ fun HomeScreen(navCon: NavController) {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                *
-                * */
+
             }) {
                 Text("Draw")
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(x=100.dp,y=0.dp),
+            contentAlignment = Alignment.Center
+        ){
+            Button(onClick = {
+                    navCon.navigate("whiteboard")
+
+
+
+
+
+            }) {
+                Text("Debug")
             }
         }
     }

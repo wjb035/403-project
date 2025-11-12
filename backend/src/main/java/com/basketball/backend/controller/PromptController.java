@@ -51,4 +51,11 @@ public class PromptController {
     public String testPrompt() {
         return backendWordFetcher.getPrompt();
     }
+
+
+    @GetMapping("/time")
+    public Boolean getTime() {
+        return promptRepository.findTopByOrderByDateGeneratedDesc().getDrawingWindowOpen();
+        //return false;
+    }
 }
