@@ -17,10 +17,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
@@ -70,6 +73,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
     var profilePictureUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var isEdit by rememberSaveable { mutableStateOf(false) }
 
+    // PROFILE PICTURE AREA
     @Composable
     fun ProfilePictureSection (
         userViewModel: UserViewModel,
@@ -78,13 +82,15 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         // File picker for the pfp
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                uploadProfilePicture(
-                    uri,
-                    user!!.id!!,
-                    context,
-                    userApi,
-                    userViewModel
-                )
+                if (user?.id != null) {
+                    uploadProfilePicture(
+                        uri = uri,
+                        userId = user!!.id!!,
+                        context = context,
+                        userApi = userApi,
+                        userViewModel = userViewModel
+                    )
+                }
             }
         }
 
@@ -98,7 +104,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Display profile picture if available
-            if (profilePictureUrl!!.isNotEmpty()) {
+            if (!profilePictureUrl.isNullOrEmpty()) {
                 AsyncImage(
                     model = profilePictureUrl,
                     contentDescription = "Profile Picture",
@@ -125,9 +131,13 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         }
     }
 
-
-
-    Column(modifier = Modifier.fillMaxSize()) {
+    // MAIN SETTINGS COLLUMN
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 20.dp)
+        .verticalScroll(rememberScrollState())
+    ){
+        Spacer(modifier = Modifier.height(5.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
@@ -136,9 +146,16 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
             Text(
                 text = "Settings",
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = 40.sp
             )
         }
+
+        Spacer(modifier = Modifier.height(25.dp))
+        ProfilePictureSection(
+            userViewModel = userViewModel,
+            userApi = RetrofitInstance.userApi
+        )
+
         Spacer(modifier = Modifier.height(25.dp))
         Button(
             //modifier = Modifier.fillMaxWidth(),
@@ -159,6 +176,8 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         Spacer(modifier = Modifier.height(25.dp))
 
         NotificationButton()
+
+        Spacer(modifier = Modifier.height(25.dp))
 
         Button(
             //modifier = Modifier.fillMaxWidth(),
