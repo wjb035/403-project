@@ -85,6 +85,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
@@ -99,7 +100,9 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
@@ -151,7 +154,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     var isEraser by remember { mutableStateOf(false) }
     var canDraw by remember { mutableStateOf(false) }
     var remainingTime by remember { mutableStateOf(300000L) }
-    var countdown by remember { mutableStateOf("Press \"Ready\" when you're ready to draw!") }
+    var countdown by remember { mutableStateOf("Tap \"Ready!\" to begin!") }
     var userHasStarted by remember { mutableStateOf(false) }
     var showButton by remember { mutableStateOf(false) }
     val drawData = booleanPreferencesKey("drawData")
@@ -299,7 +302,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 80.dp)
+                .offset(x = 0.dp, y = 100.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -307,16 +310,17 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-            Text(
+                Text(
                 text = prompt,
                 color = MaterialTheme.colorScheme.primary,
                 style = TextStyle(
-                    shadow = Shadow(color = Color.White, offset = Offset.Zero, blurRadius = 3f),
+
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 32.sp,
-                    drawStyle = Stroke(width = 2f, miter = 2f),
+                    fontSize = 27.sp,
+                    fontStyle = FontStyle.Italic,
+                    textDecoration = TextDecoration.Underline)
                 )
-            ) }
+            }
         }
     }
 
@@ -347,15 +351,26 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                         visible = displayReady
 
                     ) {
-                        Button(onClick = {
-                            ok?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
-                            if (!userHasStarted) {
-                                userHasStarted = true
-                                userIsDrawing = true
-                                canDraw = true
-                            }
-                        }) {
-                            Text("Ready?")
+                        IconButton(
+                            onClick = {
+                                ok?.let {
+                                    soundPool?.play(
+                                        it, 1f, 1f,
+                                        0, 0, 1f
+                                    )
+                                }
+                                if (!userHasStarted) {
+                                    userHasStarted = true
+                                    userIsDrawing = true
+                                    canDraw = true
+                                }
+                            },
+                            modifier = Modifier.size(70.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ready),
+                                contentDescription = "Ready Button"
+                            )
                         }
                     }
 
@@ -395,7 +410,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(x = 0.dp, y = 120.dp)
+                .offset(x = 0.dp, y = 130.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth()
@@ -407,6 +422,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     text = countdown,
                     modifier = Modifier,
                     fontSize = 18.sp,
+                    color = Color.DarkGray,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -456,14 +472,25 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
         ) {
             Row(
                 Modifier.fillMaxWidth()
-                    .padding(horizontal = 40.dp)
+                    .padding(horizontal = 20.dp)
                     .height(100.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Button(onClick = { expanded = true }) {
-                    Text("Brush Thickness")
+//                Button(onClick = { expanded = true }) {
+//                    Text("Brush Thickness")
+//                }
+
+                IconButton(
+                    onClick = { expanded = true },
+                    modifier = Modifier.size(70.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.brush_size),
+                        contentDescription = "Change Brush Size",
+                        modifier = Modifier.size(60.dp)
+                    )
                 }
 
                 DropdownMenu(
@@ -524,7 +551,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     Image(
                         painter = painterResource(id = R.drawable.reset),
                         contentDescription = "Clear Canvas",
-                        modifier = Modifier.size(60.dp)
+                        modifier = Modifier.size(55.dp)
                     )
                 }
 
@@ -572,12 +599,12 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                             }
                         }
                     } },
-                modifier = Modifier.size(75.dp)
+                modifier = Modifier.size(70.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.save),
                         contentDescription = "Save to Device",
-                        modifier = Modifier.size(70.dp)
+                        modifier = Modifier.size(55.dp)
                     )
                 }
             }
@@ -598,7 +625,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     Canvas(
                         modifier = Modifier.size(width = 400.dp, height = 400.dp)
 
-                            .border(BorderStroke(8.dp, Color.Black), shape = RoundedCornerShape(0.dp))
+                            .border(BorderStroke(8.dp, Color.hsv(hue = 212f, saturation = 1f, value = 0.76f)), shape = RoundedCornerShape(0.dp))
                             .background(Color.White)
                             .pointerInput(true) {
                                 val drawFlow: Flow<Boolean> = context.dataStore.data

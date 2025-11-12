@@ -46,18 +46,18 @@ class MainActivity : ComponentActivity() {
                         "Home" -> R.drawable.home // Replace with your actual drawable resource
                         "Profile" -> R.drawable.profile
                         "Gallery" -> R.drawable.gallery
-                        "Search" -> R.drawable.search_icon
-                        "Settings" -> R.drawable.setting_icon
+                        "Search" -> R.drawable.search
+                        "Settings" -> R.drawable.settings
                         else -> R.drawable.image
                     }
                 }
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("home", "search", "gallery", "profile", "settings", "whiteboard", "prompt")){
+                        if (currentRoute in listOf("search", "gallery", "home", "profile", "settings", "whiteboard", "prompt")){
                             NavigationBar(
                                 containerColor = MaterialTheme.colorScheme.primary
                             ) {
-                                val items = listOf("Home", "Search", "Gallery", "Profile", "Settings")
+                                val items = listOf("Search", "Gallery", "Home", "Profile", "Settings")
                                 
                                 items.forEach { route ->
                                     NavigationBarItem(
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                                         icon = {Image(
                                             painter = painterResource(id = getIconForItem(route)),
                                             contentDescription = route,
-                                            modifier = Modifier.size(24.dp)
+                                            modifier = Modifier.size(36.dp)
                                             )
 
                                         },

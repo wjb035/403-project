@@ -1,5 +1,6 @@
 package com.example.drawingapp.ui.settings
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -8,6 +9,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +28,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -39,14 +44,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
 import kotlin.system.exitProcess
 import com.example.drawingapp.model.UserViewModel
@@ -64,7 +72,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-@androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 @Composable
 fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
     val context = LocalContext.current
@@ -102,7 +110,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             // Display profile picture if available
             if (!profilePictureUrl.isNullOrEmpty()) {
@@ -111,6 +119,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(120.dp)
+                        .padding(16.dp)
                         .clip(CircleShape)
                         .border(3.dp, Color(0xFF6200EE), CircleShape)
                 )
@@ -118,11 +127,12 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
                 Box(
                     modifier = Modifier
                         .size(120.dp)
+                        .padding(16.dp)
                         .clip(CircleShape)
                         .background(Color.Gray),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No Image", color = Color.White)
+                    Text("No Image!", color = Color.White)
                 }
             }
         }
@@ -133,13 +143,13 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         }
     }
 
-    // MAIN SETTINGS COLLUMN
+    // MAIN SETTINGS COLUMN
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(horizontal = 20.dp)
-        .verticalScroll(rememberScrollState())
+        .verticalScroll(rememberScrollState()),
     ){
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
@@ -148,7 +158,8 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
             Text(
                 text = "Settings",
                 fontWeight = FontWeight.Bold,
-                fontSize = 40.sp
+                fontSize = 32.sp,
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -182,7 +193,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         Spacer(modifier = Modifier.height(25.dp))
 
         Button(
-            //modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.outlinedButtonColors(containerColor = Color(0xFFFF2B58)),
             onClick = {
                 if (userViewModel.currentUser?.id != null) {
                     val userId = userViewModel.currentUser!!.id!!
@@ -212,7 +223,10 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
                 }
             }
         ) {
-            Text(text = "DELETE ACCOUNT")
+            Text(text = "DELETE ACCOUNT",
+                modifier = Modifier,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black)
         }
     }
 }
@@ -223,13 +237,13 @@ fun EditBar() {
         OutlinedTextField(
             state = rememberTextFieldState(),
             label = { Text("Edit Name") },
-            placeholder = { Text("edit name") }
+            placeholder = { Text("Your name here...") }
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
             state = rememberTextFieldState(),
             label = { Text("Edit Bio") },
-            placeholder = { Text("edit bio") }
+            placeholder = { Text("Your bio here...") }
         )
     }
 }
@@ -255,7 +269,7 @@ private fun uploadProfilePicture(uri: Uri, userId: Long, context: Context, userA
             withContext(Dispatchers.Main) {
                 // Update viewmodel
                 userViewModel.setUser(updatedUser)
-                Toast.makeText(context, "Profile picture updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Updated profile picture", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
@@ -277,7 +291,7 @@ fun NotificationSwitch(name: String) {
         )
     }
 }
-@androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 @Composable
 fun NotificationButton() {
     val context = LocalContext.current
@@ -288,7 +302,7 @@ fun NotificationButton() {
         Text("Show Notification")
     }
 }
-@androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 private fun showNotification(context: Context) {
     val channelId = "channel_id"
     val channelName = "QuickDraw Channel"
@@ -312,7 +326,7 @@ private fun showNotification(context: Context) {
     val builder = NotificationCompat.Builder(context, channelId)
         .setSmallIcon(R.mipmap.ic_launcher)
         .setContentTitle("QuickDraw Notification")
-        .setContentText("You just got a new follower!")
+        .setContentText("You have a new follower!")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     // Show notification

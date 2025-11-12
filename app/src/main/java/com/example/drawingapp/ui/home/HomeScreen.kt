@@ -9,7 +9,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,24 +87,27 @@ fun HomeScreen(navCon: NavController) {
                 modifier = Modifier.matchParentSize()
             )
 
-            Button(onClick = {
-                soundId?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
-                if (canDraw && hasDrawn) {
-                    navCon.navigate("whiteboard")
-                }
-
-
-                 else {
-                    checked = true
-                    Toast.makeText(
-                        context,
-                        "It's not your turn to draw!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-            }) {
-                Text("Draw")
+            IconButton(
+                onClick = {
+                    soundId?.let { soundPool?.play(it, 1f, 1f, 0, 0, 1f) }
+                    if (canDraw && hasDrawn) {
+                        navCon.navigate("whiteboard")
+                    }
+                    else {
+                        checked = true
+                        Toast.makeText(
+                            context,
+                            "It's not time to draw yet!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                modifier = Modifier.size(650.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.home_screen_button),
+                    contentDescription = "Go To Whiteboard!"
+                )
             }
         }
 
@@ -114,22 +119,11 @@ fun HomeScreen(navCon: NavController) {
         ){
             Button(onClick = {
                     navCon.navigate("whiteboard")
-
-
-
-
-
             }) {
                 Text("Debug")
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(navCon = rememberNavController())
 }
 
 
@@ -141,3 +135,11 @@ suspend fun HasDrawn(context: Context,drawData: Preferences.Key<Boolean>): Boole
         }
     return drawFlow.first()
 }
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(navCon = rememberNavController())
+}
+
+
