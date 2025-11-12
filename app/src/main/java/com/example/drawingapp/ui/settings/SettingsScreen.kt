@@ -76,7 +76,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 @Composable
 fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
     val context = LocalContext.current
@@ -181,14 +180,16 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         ) {
             Text(text = "Edit Profile")
         }
-        if (isEdit) { EditBar() }
+        if (isEdit) { EditBar(userViewModel) }
 
         Spacer(modifier = Modifier.height(30.dp))
 
         Text("Notification Settings")
         Spacer(Modifier.height(20.dp))
         NotificationArea(context, "Friend's Posts")
+        Spacer(Modifier.height(10.dp))
         NotificationArea(context, "New Followers")
+        Spacer(Modifier.height(10.dp))
         NotificationArea(context,"Liked Posts")
 
         Spacer(modifier = Modifier.height(25.dp))
@@ -237,19 +238,41 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
 }
 
 @Composable
-fun EditBar() {
+fun EditBar(userViewModel: UserViewModel) {
+    var newname by remember { mutableStateOf("") }
+    var newbio by remember { mutableStateOf("") }
+
     Column {
         OutlinedTextField(
-            state = rememberTextFieldState(),
+            value = newname,
+            onValueChange = { newvalue ->
+                newname = newvalue
+            },
             label = { Text("Edit Name") },
             placeholder = { Text("Your name here...") }
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            state = rememberTextFieldState(),
+            value = newbio,
+            onValueChange = { newvalue ->
+                newbio = newvalue
+            },
             label = { Text("Edit Bio") },
             placeholder = { Text("Your bio here...") }
+
         )
+        Spacer(modifier = Modifier.height(5.dp))
+        Button (onClick = {
+            if (newname != "") {
+                userViewModel.currentUser!!.username = newname
+            }
+            if (newbio != "") {
+                userViewModel.currentUser!!.bio = newbio
+            }
+
+        } ) {
+            Text("Save")
+        }
     }
 }
 
@@ -291,8 +314,10 @@ fun NotificationArea(context: Context, name: String) {
         Spacer(Modifier.width(70.dp))
         Button(onClick = {
             showNotification(context, name)
-        }) {
-            Text("Notification for $name")
+        },
+            modifier = Modifier.size(width = 200.dp, height = 40.dp)) {
+            Text("Notification for $name",
+                fontSize = 10.sp)
         }
     }
 }
@@ -365,4 +390,10 @@ fun showNotification(context: Context, name: String) {
 
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.notify(1, notification)
+}
+
+@Preview
+@Composable
+fun SettingsScreenPreview() {
+    SettingsScreen(navCon = rememberNavController(), userViewModel = UserViewModel())
 }
