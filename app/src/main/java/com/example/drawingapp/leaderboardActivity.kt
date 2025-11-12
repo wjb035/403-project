@@ -249,7 +249,7 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
                     }
                 },
                 soundPool,
-                ok,
+                save,
                 back
             )
         }
@@ -272,7 +272,7 @@ fun DrawingDialog(
     onLike: (drawingId: Long) -> Unit,
     onUnlike: (drawingId: Long) -> Unit,
     soundPool: SoundPool?,
-    ok: Int?,
+    save: Int?,
     back: Int?
 ){
     AlertDialog(
@@ -309,7 +309,7 @@ fun DrawingDialog(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Button(onClick = {
-                        ok?.let {
+                        save?.let {
                             soundPool?.play(
                                 it, 1f, 1f,
                                 0, 0, 1f
