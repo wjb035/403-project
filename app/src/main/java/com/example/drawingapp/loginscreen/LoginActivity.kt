@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.drawingapp.model.UserViewModel
+import kotlinx.coroutines.launch
 
 
 /**
@@ -57,6 +59,7 @@ fun LoginScreen(navCon: NavController, userViewModel: UserViewModel) {
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
 
         // Background
         Box(
@@ -111,28 +114,20 @@ fun LoginScreen(navCon: NavController, userViewModel: UserViewModel) {
 
             Button(
                 onClick = {
-                    val credentials = mapOf("username" to username, "password" to password)
-                    RetrofitInstance.userApi.login(credentials).enqueue(object : Callback<User> {
-                        override fun onResponse(call: Call<User>, response: Response<User>) {
-                            if (response.isSuccessful) {
-                                val loggedInUser = response.body()!!
-                                userViewModel.setUser(loggedInUser)
-                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT)
-                                    .show()
-                                navCon.navigate("splash") {
-                                    popUpTo("login") { inclusive = true }
-                                }
-                            } else {
-                                Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT)
-                                    .show()
+                    scope.launch {
+                        try {
+                            val loggedInUser = RetrofitInstance.userApi.login(
+                                mapOf("username" to username, "password" to password)
+                            )
+                            userViewModel.setUser(loggedInUser)
+                            Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                            navCon.navigate("splash") {
+                                popUpTo("login") { inclusive = true }
                             }
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Invalid credentials or network error", Toast.LENGTH_SHORT).show()
                         }
-
-                        override fun onFailure(call: Call<User>, t: Throwable) {
-                            Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    })
+                    }
                 },
                 //modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(

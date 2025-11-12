@@ -27,6 +27,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import androidx.compose.material3.OutlinedTextField
 import com.example.drawingapp.model.UserViewModel
+import kotlinx.coroutines.launch
 
 
 /**
@@ -44,6 +45,8 @@ fun RegisterScreen(navCon: NavController, userViewModel: UserViewModel) {
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+
 
         // Background
         Box(
@@ -112,28 +115,22 @@ fun RegisterScreen(navCon: NavController, userViewModel: UserViewModel) {
                         return@Button
                     }
                     val user = User(username = username, password = password)
-                    RetrofitInstance.userApi.register(user).enqueue(object : Callback<User> {
-                        override fun onResponse(call: Call<User>, response: Response<User>) {
-                            if (response.isSuccessful) {
-                                val registeredUser = response.body()!!
-                                userViewModel.setUser(registeredUser)
-                                Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT)
-                                    .show()
-                                navCon.navigate("splash") {
-                                    popUpTo("register") { inclusive = true }
-                                }
-
-                            } else {
-                                Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT)
-                                    .show()
+                    scope.launch {
+                        try {
+                            val registeredUser = RetrofitInstance.userApi.register(user)
+                            userViewModel.setUser(registeredUser)
+                            Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+                            navCon.navigate("splash") {
+                                popUpTo("register") { inclusive = true }
                             }
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                "Registration failed: ${e.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
-
-                        override fun onFailure(call: Call<User>, t: Throwable) {
-                            Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
-                        }
-
-                    })
+                    }
                 },
                 //modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(

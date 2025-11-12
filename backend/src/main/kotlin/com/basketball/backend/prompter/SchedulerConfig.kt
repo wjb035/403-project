@@ -21,7 +21,7 @@ public class SchedulerConfig(private val promptController: PromptController) {
     private var future: ScheduledFuture<*>? = null
 
     // demo mode
-    private val demoMode = true
+    private val demoMode = false
     private val demoIntervalSeconds = 20L
 
     init { scheduleNextPrompt() }
