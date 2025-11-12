@@ -166,7 +166,7 @@ fun ProfileSection(
                 .padding(horizontal = 20.dp)
         ) {
             RoundImage(
-                image = user!!.profilePicture,
+                imageUrl = userViewModel.getUser()!!.profilePicture,
                 modifier = Modifier
                     .size(100.dp)
                     .weight(3f)
@@ -190,14 +190,29 @@ fun RoundImage(
         contentDescription = null,
         modifier = modifier
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
-            .border(
-                width = 1.dp,
-                color = Color.LightGray,
-                shape = CircleShape
-            )
+            .border(3.dp, Color(0xFF6200EE), CircleShape)
             .padding(3.dp)
             .clip(CircleShape)
-    )
+    ) {
+        if (!imageUrl.isNullOrEmpty()) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "Profile Picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            // fallback gray circle
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Gray, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("No Image", color = Color.White, fontSize = 12.sp)
+            }
+        }
+    }
 }
 
 @Composable
