@@ -1,5 +1,7 @@
 package com.example.drawingapp
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import com.example.drawingapp.R
@@ -79,6 +81,29 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+
+    //stuff for sounds/buttons
+    var soundPool: SoundPool? by remember { mutableStateOf(null) }
+    var ok: Int? by remember { mutableStateOf(null) }
+    var click: Int? by remember { mutableStateOf(null) }
+    var back: Int? by remember { mutableStateOf(null) }
+    var save: Int? by remember { mutableStateOf(null) }
+    LaunchedEffect(context) {
+        val attributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .build()
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(1)
+            .setAudioAttributes(attributes)
+            .build()
+        ok = soundPool?.load(context, R.raw.ok, 1)
+        click = soundPool?.load(context, R.raw.click, 1)
+        back = soundPool?.load(context, R.raw.back, 1)
+        save = soundPool?.load(context, R.raw.save, 1)
+    }
+
+
     // DRAWING STORAGE SETUP
     var drawings by remember { mutableStateOf<List<Drawing>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -128,7 +153,14 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
                 val isSelected = selectedTab == tab
                 Button(
 
-                    onClick = { selectedTab = tab },
+                    onClick = {
+                        click?.let {
+                            soundPool?.play(
+                                it, 1f, 1f,
+                                0, 0, 1f
+                            )
+                        }
+                        selectedTab = tab },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                         contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
@@ -153,6 +185,12 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
                     Card(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                         onClick = {
+                            ok?.let {
+                                soundPool?.play(
+                                    it, 1f, 1f,
+                                    0, 0, 1f
+                                )
+                            }
                             selectedDrawing = drawing
                             showDialog = true
                         }
@@ -178,8 +216,16 @@ fun leaderboard(navCon: NavController, userViewModel: UserViewModel) {
         if (showDialog && selectedDrawing != null) {
             DrawingDialog(
                 drawing = selectedDrawing!!,
-                onDismiss = { showDialog = false },
-                onLike = { drawingId ->
+                onDismiss = {
+                    back?.let {
+                        soundPool?.play(
+                            it, 1f, 1f,
+                            0, 0, 1f
+                        )
+                    }
+                    showDialog = false },
+                onLike = {
+                    drawingId ->
                     scope.launch {
                         try {
                             val updated = RetrofitInstance.drawingApi.likeDrawing(drawingId, currentUser.id!!)
@@ -248,7 +294,9 @@ fun DrawingDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(onClick = { onLike(drawing.id) }) { Text("Like") }
+                    Button(onClick = {
+
+                        onLike(drawing.id) }) { Text("Like") }
                     Button(onClick = { onUnlike(drawing.id) }) { Text("Unlike") }
                 }
             }

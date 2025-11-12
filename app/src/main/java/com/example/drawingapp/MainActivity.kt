@@ -1,5 +1,7 @@
 package com.example.drawingapp
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Bundle
 
 import com.example.drawingapp.ui.whiteboardtheme.WhiteboardSimTheme
@@ -19,6 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -34,8 +42,23 @@ class MainActivity : ComponentActivity() {
 
     @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
+            val context = LocalContext.current
+            var soundPool: SoundPool? by remember { mutableStateOf(null) }
+            var ok: Int? by remember { mutableStateOf(null) }
+            LaunchedEffect(context) {
+                val attributes = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .build()
+                soundPool = SoundPool.Builder()
+                    .setMaxStreams(1)
+                    .setAudioAttributes(attributes)
+                    .build()
+                ok = soundPool?.load(context, R.raw.ok, 1)
+            }
             WhiteboardSimTheme {
                 val navController = rememberNavController()
                 val userViewModel: UserViewModel = viewModel()
@@ -71,7 +94,15 @@ class MainActivity : ComponentActivity() {
                                         },
                                         label = { Text(route,color = MaterialTheme.colorScheme.onPrimary) },
                                         selected = false,
-                                        onClick = { navController.navigate(route.lowercase()) },
+                                        onClick = {
+                                            ok?.let {
+                                                soundPool?.play(
+                                                    it, 1f, 1f,
+                                                    0, 0, 1f
+                                                )
+                                            }
+                                            navController.navigate(route.lowercase())
+                                                  },
                                         colors = NavigationBarItemDefaults.colors(
                                             selectedIconColor = MaterialTheme.colorScheme.onPrimary,
                                             selectedTextColor = MaterialTheme.colorScheme.onPrimary,
