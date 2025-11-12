@@ -1,5 +1,7 @@
 package com.example.drawingapp.ui.profile
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.drawingapp.R
 import com.example.drawingapp.model.Drawing
 import com.example.drawingapp.model.UserViewModel
 import com.example.drawingapp.network.RetrofitInstance
@@ -62,7 +65,25 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
-
+    var soundPool: SoundPool? by remember { mutableStateOf(null) }
+    var ok: Int? by remember { mutableStateOf(null) }
+    var click: Int? by remember { mutableStateOf(null) }
+    var back: Int? by remember { mutableStateOf(null) }
+    var save: Int? by remember { mutableStateOf(null) }
+    LaunchedEffect(context) {
+        val attributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .build()
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(1)
+            .setAudioAttributes(attributes)
+            .build()
+        ok = soundPool?.load(context, R.raw.ok, 1)
+        click = soundPool?.load(context, R.raw.click, 1)
+        back = soundPool?.load(context, R.raw.back, 1)
+        save = soundPool?.load(context, R.raw.save, 1)
+    }
 
     // FETCH DRAWIGNS!
     LaunchedEffect(currentUser?.id) {
@@ -112,6 +133,12 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
                         Card(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                             onClick = {
+                                ok?.let {
+                                    soundPool?.play(
+                                        it, 1f, 1f,
+                                        0, 0, 1f
+                                    )
+                                }
                                 selectedPost = posts[index]
                             }
                         ) {
@@ -142,7 +169,14 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
                 if (selectedPost != null) {
                     PhotoClick(
                         post = selectedPost!!,
-                        onDismiss = { selectedPost = null },
+                        onDismiss = {
+                            back?.let {
+                                soundPool?.play(
+                                    it, 1f, 1f,
+                                    0, 0, 1f
+                                )
+                            }
+                            selectedPost = null },
                         onLike = { drawingId ->
                             scope.launch {
                                 try {
@@ -164,7 +198,10 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
                                     Toast.makeText(context, "Can't unlike drawing", Toast.LENGTH_SHORT).show()
                                 }
                             }
-                        }
+                        },
+                        soundPool,
+                        save,
+                        back
                     )
                 }
             }
@@ -317,7 +354,10 @@ fun PhotoClick(
     post: Drawing,
     onDismiss: () -> Unit,
     onLike: (drawingId: Long) -> Unit,
-    onUnlike: (drawingId: Long) -> Unit
+    onUnlike: (drawingId: Long) -> Unit,
+    soundPool: SoundPool?,
+    save: Int?,
+    back: Int?
 ) {
     var isToggled by rememberSaveable { mutableStateOf(false) }
 
@@ -365,8 +405,22 @@ fun PhotoClick(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
         ) {
-            Button(onClick = { onLike(post.id) }) { Text("❤️") }
-            Button(onClick = { onUnlike(post.id) }) { Text("\uD83D\uDDA4") }
+            Button(onClick = {
+                save?.let {
+                    soundPool?.play(
+                        it, 1f, 1f,
+                        0, 0, 1f
+                    )
+                }
+                onLike(post.id) }) { Text("❤️") }
+            Button(onClick = {
+                back?.let {
+                    soundPool?.play(
+                        it, 1f, 1f,
+                        0, 0, 1f
+                    )
+                }
+                onUnlike(post.id) }) { Text("\uD83D\uDDA4") }
         }
 
         Button(

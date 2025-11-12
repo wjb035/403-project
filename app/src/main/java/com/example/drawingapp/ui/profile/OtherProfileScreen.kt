@@ -1,5 +1,7 @@
 package com.example.drawingapp.ui.profile
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.drawingapp.R
 import com.example.drawingapp.model.Drawing
 import com.example.drawingapp.model.UserViewModel
 import com.example.drawingapp.network.RetrofitInstance
@@ -39,6 +43,27 @@ fun OtherProfileScreen(navCon: NavController, userViewModel: UserViewModel, user
     var selectedPost by remember { mutableStateOf<Drawing?>(null) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    var soundPool: SoundPool? by remember { mutableStateOf(null) }
+    var ok: Int? by remember { mutableStateOf(null) }
+    var click: Int? by remember { mutableStateOf(null) }
+    var back: Int? by remember { mutableStateOf(null) }
+    var save: Int? by remember { mutableStateOf(null) }
+    LaunchedEffect(context) {
+        val attributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .build()
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(1)
+            .setAudioAttributes(attributes)
+            .build()
+        ok = soundPool?.load(context, R.raw.ok, 1)
+        click = soundPool?.load(context, R.raw.click, 1)
+        back = soundPool?.load(context, R.raw.back, 1)
+        save = soundPool?.load(context, R.raw.save, 1)
+    }
+
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
@@ -128,7 +153,10 @@ fun OtherProfileScreen(navCon: NavController, userViewModel: UserViewModel, user
                                 Toast.makeText(context, "Failed to unlike drawing", Toast.LENGTH_SHORT).show()
                             }
                         }
-                    }
+                    },
+                    soundPool,
+                    save,
+                    back
                 )
             }
         }
