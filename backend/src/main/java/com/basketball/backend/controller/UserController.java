@@ -5,6 +5,7 @@ import com.basketball.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -13,6 +14,18 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    // Get all users
+    @GetMapping("/display")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Search by username
+    @GetMapping("/search")
+    public List<User> searchUsers(@RequestParam String query) {
+        return userRepository.findByUsernameContainingIgnoreCase(query);
+    }
 
     // POST /api/users/register
     // registers a new user if the username does not already exist

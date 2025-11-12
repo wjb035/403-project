@@ -3,6 +3,7 @@ package com.basketball.backend.repository;
 import com.basketball.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 // Repository interface that handles database operations for User entities.
 // spring Data JPA automatically provides implementations 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // custom method to find a user by their username
+    // custom method to find a user by their username, one of them is not case sensitive for users
     User findByUsername(String username);
+    List<User> findByUsernameContainingIgnoreCase(String username);
 }
