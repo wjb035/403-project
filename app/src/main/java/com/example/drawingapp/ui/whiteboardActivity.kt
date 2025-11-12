@@ -271,27 +271,28 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     visible = showButton,
 
                     ) {
-                    Button(onClick = {
-                        coroutineScope.launch {
-                            uriDay = saveDrawing(context, lines, false, prompt)
-
-
-                            val sendIntent: Intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                //putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
-                                putExtra(Intent.EXTRA_STREAM, uriDay)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                type = "image/png"
-                                //type = "text/plain"
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                uriDay = saveDrawing(context, lines, false, prompt)
+                                val sendIntent: Intent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    //putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                                    putExtra(Intent.EXTRA_STREAM, uriDay)
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    type = "image/png"
+                                    //type = "text/plain"
+                                }
+                                context.startActivity(sendIntent)
                             }
-
-
-                            context.startActivity(sendIntent)
-                        }
-
-                    }) {
-                        Text("Share")
+                        },
+                        modifier = Modifier.size(50.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.share),
+                            contentDescription = "Share Button"
+                        )
                     }
 
                 }
@@ -377,17 +378,23 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
                     AnimatedVisibility(
                         visible = userIsDrawing
                     ){
-                        Button(onClick = {
-                            CountDown?.cancel()
-                            countdown = "Time's up!"
-                            canDraw = false
-                            coroutineScope.launch {
-                                incrementCounter(context, drawData, false)
-                            }
+                        IconButton(
+                            onClick = {
+                                CountDown?.cancel()
+                                countdown = "Time's up!"
+                                canDraw = false
+                                coroutineScope.launch {
+                                    incrementCounter(context, drawData, false)
+                                }
                             userIsDrawing = false
                             showButton = true
-                        }) {
-                            Text("I'm done!")
+                            },
+                            modifier = Modifier.size(70.dp)
+                            ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.i_m_done),
+                                contentDescription = "I'm done!"
+                            )
                         }
                     }
 
