@@ -36,8 +36,8 @@ public interface UserApi {
 
     // Upload a pfp
     @Multipart
-    @POST("/api/users/uploadDrawing")
-    suspend fun uploadDrawing(
+    @POST("/api/users/uploadProfilePicture")
+    suspend fun uploadProfilePicture(
         @Part file: MultipartBody.Part,
         @Part("userId") userId: RequestBody,
     ): User
