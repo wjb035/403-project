@@ -17,6 +17,7 @@ public interface DrawingRepository extends JpaRepository<Drawing, Long> {
     // custom method for getting drawings sorted by likes descending
     List<Drawing> findAllByOrderByLikesCountDesc();
 
-
+    // custom method for getting all drawings from user
+    List<Drawing> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 }
 

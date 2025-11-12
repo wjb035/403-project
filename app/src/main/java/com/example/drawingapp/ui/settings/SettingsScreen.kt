@@ -139,7 +139,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
         .padding(horizontal = 20.dp)
         .verticalScroll(rememberScrollState())
     ){
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,

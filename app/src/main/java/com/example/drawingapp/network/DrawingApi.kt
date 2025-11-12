@@ -19,6 +19,10 @@ interface DrawingApi {
     @GET("api/drawings/leaderboard/new")
     suspend fun getLeaderboardByNew(): List<Drawing>
 
+    // Get all drawings from user
+    @GET("api/drawings/user/{userId}")
+    suspend fun getUserDrawings(@Path("userId") userId: Long): List<Drawing>
+
     // Like a drawing
     @POST("api/drawings/like/{drawingId}/{userId}")
     suspend fun likeDrawing(

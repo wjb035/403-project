@@ -48,6 +48,12 @@ public class DrawingController {
         return drawingRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    // Get all drawings for a specific user
+    @GetMapping("/user/{userId}")
+    public List<Drawing> getUserDrawings(@PathVariable Long userId) {
+        return drawingRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+    }
+
     // stores a drawing to the user's profile
     @PostMapping("/storeDrawing")
     public Drawing storeDrawing(@RequestBody Drawing drawing) {

@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,19 @@ fun ProfileScreen(navCon: NavController, userViewModel: UserViewModel) {
     var selectedPost by remember { mutableStateOf<Drawing?>(null) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    // FETCH DRAWIGNS!
+    LaunchedEffect(currentUser?.id) {
+        currentUser?.id?.let { userId ->
+            scope.launch {
+                try {
+                    posts = RetrofitInstance.drawingApi.getUserDrawings(userId)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Failed to load drawings", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(
