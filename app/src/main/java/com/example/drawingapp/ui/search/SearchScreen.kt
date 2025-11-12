@@ -97,7 +97,6 @@ fun SearchScreen(navCon: NavController) {
             MiniProfilePopup(
                 user = user,
                 onDismiss = { selectedUser = null },
-                onViewProfile = { navCon.navigate("profile") }
             )
         }
     }
@@ -108,7 +107,6 @@ fun SearchScreen(navCon: NavController) {
 fun MiniProfilePopup(
     user: User,
     onDismiss: () -> Unit,
-    onViewProfile: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -141,9 +139,6 @@ fun MiniProfilePopup(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = onViewProfile) {
-                    Text("View Full Profile")
-                }
 
                 TextButton(onClick = onDismiss) {
                     Text("Close", color = Color.Red)
