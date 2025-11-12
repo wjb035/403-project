@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
                             SearchScreen(navCon=navController)
                         }
                         composable(route = "settings") {
-                            SettingsScreen(navCon=navController)
+                            SettingsScreen(navCon=navController, userViewModel = userViewModel)
                         }
 
                     }

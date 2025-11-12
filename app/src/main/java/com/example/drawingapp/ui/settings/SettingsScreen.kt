@@ -3,27 +3,39 @@ package com.example.drawingapp.ui.settings
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.net.Uri
 import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,12 +45,88 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import com.example.drawingapp.R
 import kotlin.system.exitProcess
+import com.example.drawingapp.model.UserViewModel
+import coil.request.ImageRequest
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import coil.compose.AsyncImage
+import com.example.drawingapp.network.RetrofitInstance
+import com.example.drawingapp.network.UserApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 @androidx.annotation.RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
 @Composable
-fun SettingsScreen(navCon: NavController) {
-
+fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
+    val context = LocalContext.current
+    val user by remember { mutableStateOf(userViewModel.currentUser) }
+    var username by remember { mutableStateOf(user?.username ?: "") }
+    var bio by remember { mutableStateOf(user?.bio ?: "") }
+    var profilePictureUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var isEdit by rememberSaveable { mutableStateOf(false) }
+
+    @Composable
+    fun ProfilePictureSection (
+        userViewModel: UserViewModel,
+        userApi: UserApi
+    ) {
+        // File picker for the pfp
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                uploadProfilePicture(
+                    uri,
+                    user!!.id!!,
+                    context,
+                    userApi,
+                    userViewModel
+                )
+            }
+        }
+
+        // Observe ViewModel for live updates
+        LaunchedEffect(userViewModel.currentUser?.profilePicture) {
+            profilePictureUrl = userViewModel.currentUser?.profilePicture ?: ""
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Display profile picture if available
+            if (profilePictureUrl!!.isNotEmpty()) {
+                AsyncImage(
+                    model = profilePictureUrl,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No Image", color = Color.White)
+                }
+            }
+        }
+
+        // Button for changing picture
+        Button(onClick = { launcher.launch("image/*") }) {
+            Text("Change Profile Picture")
+        }
+    }
+
+
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -95,6 +183,37 @@ fun EditBar() {
             label = { Text("Edit Bio") },
             placeholder = { Text("edit bio") }
         )
+    }
+}
+
+// Profile picture set
+private fun uploadProfilePicture(uri: Uri, userId: Long, context: Context, userApi: UserApi, userViewModel: UserViewModel){
+    val file = File(context.cacheDir, "temp_profile_pic")
+    context.contentResolver.openInputStream(uri)?.use { input ->
+        file.outputStream().use { output -> input.copyTo(output) }
+    }
+
+    val part = MultipartBody.Part.createFormData(
+        "file",
+        file.name,
+        file.asRequestBody("image/*".toMediaTypeOrNull())
+    )
+    val userIdBody = userId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
+    // Upload with retrofit
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val updatedUser = userApi.uploadProfilePicture(part, userIdBody)
+            withContext(Dispatchers.Main) {
+                // Update viewmodel
+                userViewModel.setUser(updatedUser)
+                Toast.makeText(context, "Profile picture updated", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
 
