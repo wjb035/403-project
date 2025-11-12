@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon dependencies || true
 COPY src src
 
 # Build the Spring Boot jar
-RUN ./gradlew --no-daemon bootJar
+RUN ./gradlew --no-daemon bootJar --stacktrace
 
 # Stage 2: Create the runtime image
 FROM eclipse-temurin:17-jre
