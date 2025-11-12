@@ -117,7 +117,7 @@ public class UserController {
             // Upload to firebase
             Bucket bucket = StorageClient.getInstance().bucket();
             // Generate a unique name for each upload
-            String uniqueName = "drawings/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            String uniqueName = "profile_pictures/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             ;
             Blob blob = bucket.create(uniqueName, file.getBytes(), file.getContentType());
 
