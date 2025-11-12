@@ -64,7 +64,7 @@ fun HomeScreen(navCon: NavController) {
 
     LaunchedEffect(checked){
         //incrementCounter(context, drawData, false)
-        canDraw = RetrofitInstance.CanDrawApi.getTime()
+        canDraw = RetrofitInstance.promptApi.getTime()
         checked = false
     }
 
