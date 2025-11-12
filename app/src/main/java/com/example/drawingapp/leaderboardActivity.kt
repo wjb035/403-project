@@ -229,7 +229,7 @@ fun DrawingDialog(
                         .fillMaxWidth()
                         .height(400.dp)
                         .clip(RectangleShape),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 // Show the prompt
