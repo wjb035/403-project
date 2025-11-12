@@ -1,10 +1,15 @@
 package com.example.drawingapp.network;
 
+import com.example.drawingapp.model.Drawing
 import com.example.drawingapp.model.User;
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 // 1. app retrieves info
@@ -28,4 +33,13 @@ public interface UserApi {
     // Searches for a specfiic user, not case sensitive
     @GET("/api/users/search/}")
     suspend fun searchUsers(@Query("query") query: String): List<User>
+
+    // Upload a pfp
+    @Multipart
+    @POST("/api/users/uploadProfilePicture")
+    suspend fun uploadProfilePicture(
+        @Part file: MultipartBody.Part,
+        @Part("userId") userId: RequestBody,
+    ): User
+
 }

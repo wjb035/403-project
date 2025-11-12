@@ -1,11 +1,23 @@
 package com.basketball.backend.controller;
 
+import com.basketball.backend.model.Drawing;
+import com.basketball.backend.model.Prompt;
 import com.basketball.backend.model.User;
 import com.basketball.backend.repository.UserRepository;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
+import com.google.firebase.cloud.StorageClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -93,5 +105,41 @@ public class UserController {
         userRepository.save(userToUnfollow);
 
         return userToUnfollow;
+    }
+
+    // Upload drawings to database
+    @PostMapping("/uploadProfilePicture")
+    public ResponseEntity<User> uploadProfilePicture(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("userId") Long userId
+    ) {
+        try {
+            // Upload to firebase
+            Bucket bucket = StorageClient.getInstance().bucket();
+            // Generate a unique name for each upload
+            String uniqueName = "drawings/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            ;
+            Blob blob = bucket.create(uniqueName, file.getBytes(), file.getContentType());
+
+            // Generate download url
+            String downloadUrl = String.format(
+                    "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+                    bucket.getName(),
+                    URLEncoder.encode(uniqueName, StandardCharsets.UTF_8)
+            );
+
+            // Get user
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Update user's profile picture URL
+            user.setProfilePicture(downloadUrl);
+            User savedUser = userRepository.save(user);
+
+            return ResponseEntity.ok(savedUser);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

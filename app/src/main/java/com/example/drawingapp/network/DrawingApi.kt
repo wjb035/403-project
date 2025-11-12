@@ -12,22 +12,22 @@ import retrofit2.http.Part
 
 interface DrawingApi {
     // Get leaderboard by likes
-    @GET("api/users/leaderboard/likes")
+    @GET("api/drawings/leaderboard/likes")
     suspend fun getLeaderboardByLikes(): List<Drawing>
 
     // Get leaderboard by new
-    @GET("api/users/leaderboard/new")
+    @GET("api/drawings/leaderboard/new")
     suspend fun getLeaderboardByNew(): List<Drawing>
 
     // Like a drawing
-    @POST("api/users/like/{drawingId}/{userId}")
+    @POST("api/drawings/like/{drawingId}/{userId}")
     suspend fun likeDrawing(
         @Path("drawingId") drawingId: Long,
         @Path("userId") userId: Long
     ): Drawing
 
     // Dislike a drawing
-    @POST("api/users/unlike/{drawingId}/{userId}")
+    @POST("api/drawings/unlike/{drawingId}/{userId}")
     suspend fun unlikeDrawing(
         @Path("drawingId") drawingId: Long,
         @Path("userId") userId: Long
@@ -35,7 +35,7 @@ interface DrawingApi {
 
     // Upload a drawing
     @Multipart
-    @POST("/api/users/uploadDrawing")
+    @POST("/api/drawings/uploadDrawing")
     suspend fun uploadDrawing(
         @Part file: MultipartBody.Part,
         @Part("userId") userId: RequestBody,

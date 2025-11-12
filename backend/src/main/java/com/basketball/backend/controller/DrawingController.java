@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/drawings")
 @CrossOrigin(origins = "*") // Allow access from Android emulator or any client
 public class DrawingController {
 
