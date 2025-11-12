@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -53,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.drawingapp.R
@@ -81,6 +85,7 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
     var bio by remember { mutableStateOf(user?.bio ?: "") }
     var profilePictureUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var isEdit by rememberSaveable { mutableStateOf(false) }
+
 
     // PROFILE PICTURE AREA
     @Composable
@@ -182,13 +187,13 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
 
         Text("Notification Settings")
         Spacer(Modifier.height(20.dp))
-        NotificationSwitch("Friend's Posts")
-        NotificationSwitch("New Followers")
-        NotificationSwitch("Liked Posts")
+        NotificationArea(context, "Friend's Posts")
+        NotificationArea(context, "New Followers")
+        NotificationArea(context,"Liked Posts")
 
         Spacer(modifier = Modifier.height(25.dp))
 
-        NotificationButton()
+        PermissionButton(context = context)
 
         Spacer(modifier = Modifier.height(25.dp))
 
@@ -280,57 +285,84 @@ private fun uploadProfilePicture(uri: Uri, userId: Long, context: Context, userA
 }
 
 @Composable
-fun NotificationSwitch(name: String) {
-    var isChecked by rememberSaveable { mutableStateOf(false) }
+fun NotificationArea(context: Context, name: String) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(name)
-        Spacer(Modifier.width(40.dp))
-        Switch(
-            checked = isChecked,
-            onCheckedChange = { isChecked = !isChecked }
-        )
-    }
-}
-@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-@Composable
-fun NotificationButton() {
-    val context = LocalContext.current
-
-    Button(onClick = {
-        showNotification(context)
-    }) {
-        Text("Show Notification")
-    }
-}
-@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-private fun showNotification(context: Context) {
-    val channelId = "channel_id"
-    val channelName = "QuickDraw Channel"
-
-    // Create channel for Android 8.0+
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = "Channel for demo notifications"
+        Spacer(Modifier.width(70.dp))
+        Button(onClick = {
+            showNotification(context, name)
+        }) {
+            Text("Notification for $name")
         }
+    }
+}
 
-        val notificationManager: NotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+@Composable
+fun PermissionButton(context: Context) {
+    var hasNotificationPermission by remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mutableStateOf(
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            )
+        } else mutableStateOf(true)
     }
 
-    // Build notification
-    val builder = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.mipmap.ic_launcher)
-        .setContentTitle("QuickDraw Notification")
-        .setContentText("You have a new follower!")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-    // Show notification
-    with(NotificationManagerCompat.from(context)) {
-        notify(1001, builder.build())
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasNotificationPermission = isGranted
+        }
+    )
+    Button(onClick = {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    } ) {
+        Text(text = "Request permission")
     }
+}
+
+fun showNotification(context: Context, name: String) {
+    var notification = NotificationCompat.Builder(
+        context,
+        "channel_id"
+    )
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setContentTitle("Error")
+        .setContentText("Unable to grab info")
+        .build()
+    if (name == "Friend's Posts") {
+        notification = NotificationCompat.Builder(
+            context,
+            "channel_id"
+        )
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Someone you know made a post!")
+            .setContentText("Go check it out!")
+            .build()
+    } else if (name == "New Followers") {
+        notification = NotificationCompat.Builder(
+            context,
+            "channel_id"
+        )
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("You have a new follower!")
+            .setContentText("Go check it out!")
+            .build()
+    } else if (name == "Liked Posts") {
+        notification = NotificationCompat.Builder(
+            context,
+            "channel_id"
+        )
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Someone liked your post!")
+            .setContentText("Go check it out!")
+            .build()
+    }
+
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.notify(1, notification)
 }
