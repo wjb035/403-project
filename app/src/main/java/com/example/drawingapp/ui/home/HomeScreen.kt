@@ -109,6 +109,16 @@ fun HomeScreen(navCon: NavController) {
                     contentDescription = "Go To Whiteboard!"
                 )
             }
+            if (!canDraw || !hasDrawn) {
+                Image(
+                    painter = painterResource(id = R.drawable.lock),
+                    contentDescription = "Canvas Locked",
+                    modifier = Modifier
+                        .size(180.dp)
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-20).dp, y = 20.dp)
+                )
+            }
         }
 
         Box(
