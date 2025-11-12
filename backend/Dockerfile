@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM gradle:8.3.3-jdk17-slim AS build
+FROM eclipse-temurin:17-jdk AS build
 
 # Set working directory
 WORKDIR /app
@@ -20,7 +20,7 @@ COPY src src
 RUN ./gradlew --no-daemon bootJar
 
 # Stage 2: Create the runtime image
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre
 
 # Set working directory
 WORKDIR /app
