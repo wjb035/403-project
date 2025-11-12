@@ -24,29 +24,15 @@ import kotlinx.coroutines.flow.first
 class DailyPromptWorker (private val appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params){
     override suspend fun doWork(): Result = withContext(Dispatchers.Default) {
         try {
-            val wordFetcher = WordFetch()
-            val prompt = wordFetcher.getDrawingPrompt()
+
             val drawData = booleanPreferencesKey("drawData")
             appContext.dataStore.edit { settings ->
                 settings[drawData] = true
             }
-            // Save daily prompt to SharedPreferences
-            val prefs = applicationContext.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-            val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
-            prefs.edit {
-                putString("daily_prompt", prompt)
-                putString("last_prompt_date", today)
-            }
+
 
             scheduleNextPrompt(appContext)
-            val work2 = OneTimeWorkRequestBuilder<workLock>()
-                .setInitialDelay(1, TimeUnit.HOURS)
-                .build()
-            WorkManager.getInstance(appContext).beginUniqueWork(
-                "dailyPromptWork",
-                ExistingWorkPolicy.REPLACE,
-                work2
-            ).enqueue()
+
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -59,16 +45,10 @@ class DailyPromptWorker (private val appContext: Context, params: WorkerParamete
             val delay: Long = if (testing) {
                 0L
             } else {
-                val startHour = 9
-                val endHour = 17
-                val randomHour = (startHour until endHour).random()
-                val lockHour = randomHour + 1
-                //val randomMinute = (0 until 59).random()
-                val randomMinute = 1
 
                 // Trigger the prompt whenever this time is reached
                 val calendar =  Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, randomHour)
+                    set(Calendar.HOUR_OF_DAY, 0)
                     //set(Calendar.HOUR_OF_DAY, 21)
                     set(Calendar.MINUTE, 0)
                     set(Calendar.SECOND, 0)
@@ -95,20 +75,4 @@ class DailyPromptWorker (private val appContext: Context, params: WorkerParamete
         }
     }
 
-}
-
-class workLock (private val appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params) {
-    override suspend fun doWork(): Result = withContext(Dispatchers.Default) {
-        try {
-            val drawData = booleanPreferencesKey("drawData")
-            appContext.dataStore.edit { settings ->
-                settings[drawData] = false
-            }
-            //scheduleNextPrompt(appContext)
-            Result.success()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Result.failure()
-        }
-    }
 }

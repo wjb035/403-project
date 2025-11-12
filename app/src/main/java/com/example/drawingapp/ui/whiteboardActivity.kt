@@ -76,6 +76,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import android.util.Log
 import android.view.RoundedCorner
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
@@ -214,6 +216,13 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
             }
         }
     }
+
+
+        //BackHandler(enabled = !userIsDrawing){
+            //Toast.makeText(context, "You can't go back, you're drawing!", Toast.LENGTH_SHORT).show()
+        //}
+
+
 
     // I don't think this is necessary? But I'm afraid to get rid of it.
     LaunchedEffect(Unit) {
@@ -645,6 +654,7 @@ fun whiteboard(navCon: NavController, userViewModel: UserViewModel) {
     }
 }
 }
+
 suspend fun getHasDrawn(context: Context,drawData: Preferences.Key<Boolean>): Boolean{
     val drawFlow: Flow<Boolean> = context.dataStore.data
         .map { settings ->
@@ -659,6 +669,11 @@ suspend fun incrementCounter(context: Context,drawData: Preferences.Key<Boolean>
         settings[drawData] = result
     }
 }
+
+
+@Override
+
+
 
 @Composable
 fun selectColor(onColorSelected: (Color) -> Unit){
