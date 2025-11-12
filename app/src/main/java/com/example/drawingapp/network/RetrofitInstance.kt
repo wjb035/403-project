@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL = "https://quickdraw-backend-ipi7.onrender.com"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
