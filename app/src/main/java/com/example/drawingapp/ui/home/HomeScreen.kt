@@ -115,8 +115,8 @@ fun HomeScreen(navCon: NavController) {
                     contentDescription = "Canvas Locked",
                     modifier = Modifier
                         .size(180.dp)
-                        .align(Alignment.TopEnd)
-                        .offset(x = (-20).dp, y = 20.dp)
+                        .align(Alignment.Center)
+                        .offset(y = -40.dp)
                 )
             }
         }

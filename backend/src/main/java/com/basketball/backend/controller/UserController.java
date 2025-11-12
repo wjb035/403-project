@@ -49,6 +49,7 @@ public class UserController {
     }
 
     // PATCH MAPPING FOR UBIO CHANGES
+    @PatchMapping
     public ResponseEntity<User> patchUser(
             @PathVariable Long id,
             @RequestBody Map<String, String> updates
