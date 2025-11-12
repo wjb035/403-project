@@ -29,7 +29,7 @@ object RetrofitInstance {
     val userApi: UserApi by lazy { retrofit.create(UserApi::class.java) }
     val promptApi: PromptApi by lazy { retrofit.create(PromptApi::class.java) }
 
-    val UserSettingsApi: UserSettingsApi by lazy { retrofit.create(UserSettingsApi::class.java) }
+    val userSettingsApi: UserSettingsApi by lazy { retrofit.create(UserSettingsApi::class.java) }
 
 
 

@@ -183,7 +183,34 @@ fun SettingsScreen(navCon: NavController, userViewModel: UserViewModel) {
 
         Button(
             //modifier = Modifier.fillMaxWidth(),
-            onClick = { exitProcess(0) }
+            onClick = {
+                if (userViewModel.currentUser?.id != null) {
+                    val userId = userViewModel.currentUser!!.id!!
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            RetrofitInstance.userSettingsApi.deleteUser(userId)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Account deleted", Toast.LENGTH_SHORT)
+                                    .show()
+                                // Clear ViewModel
+                                userViewModel.clearUser()
+                                // Navigate to login or exit
+                                navCon.navigate("login") {
+                                    popUpTo(0) { inclusive = true } // clear back stack
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    "Delete failed: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
+            }
         ) {
             Text(text = "DELETE ACCOUNT")
         }

@@ -17,4 +17,8 @@ class UserViewModel : ViewModel() {
     fun getUser(): User? {
         return currentUser
     }
+
+    fun clearUser() {
+        currentUser = null
+    }
 }
